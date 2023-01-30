@@ -3,7 +3,6 @@ const cors = require("cors");
 const morgan = require("morgan");
 const userRouter = require("./router/user");
 const dotenv = require("dotenv").config({path: './server/.env'});
-const db = require('./models')
 
 const PORT = process.env.PORT;
 
@@ -22,8 +21,7 @@ app.get("/", (req, res) => {
 //api routes
 app.use("/api", userRouter);
 
-db.sequelize.sync().then((req) => {
+
 app.listen(PORT, () => {
   console.log(`server running on http://localhost:${PORT}`);
 });
-})

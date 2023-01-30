@@ -1,18 +1,17 @@
 const pool = require("../database/conn");
-models = require("../models/");
 
 const getAllUser = async (req, res) => {
   let conn;
   try {
-    // conn = await pool.getConnection();
-    // console.log("db connected");
-    // const sqlQuery = `SELECT * FROM test`;
-    // let result = await pool.query(sqlQuery);
-    // res.json(result);
+    conn = await pool.getConnection();
+    console.log("db connected");
+    const sqlQuery = `SELECT * FROM test`;
+    let result = await pool.query(sqlQuery);
+    res.json(result);
 
-    models.Usertest.findAll().then((users) => {
-      res.json(users)
-    })
+    // models.Usertest.findAll().then((users) => {
+    //   res.json(users)
+    // })
   } catch (err) {
     throw err;
   } finally {
