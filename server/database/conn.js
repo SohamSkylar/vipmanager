@@ -9,6 +9,13 @@ const pool = mariadb.createPool({
   connectionLimit: 30
 })
 
+// var getConnection = function(callback) {
+//   pool.getConnection(function(err, connection){
+//     callback(err, connection)
+//   })
+// }
+
+
 module.exports = pool;
 
 // const createConn = async () => {

@@ -1,7 +1,7 @@
 const pool = require("../database/conn");
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken');
-const ENV = require('../config.js');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const ENV = require("../config.js");
 
 const getAllUser = async (req, res) => {
   let conn;
@@ -29,14 +29,13 @@ const getSpecificUser = async (req, res) => {
     console.log("db is active");
     const sqlQuery = `SELECT * FROM user WHERE username=?`;
     let result = await pool.query(sqlQuery, req.params.username);
-    if(result.length === 0 ){
-      res.send('No user found...')
-    }else{
+    if (result.length === 0) {
+      res.send("No user found...");
+    } else {
       res.json(result);
-
     }
   } catch (err) {
-    return res.send('Invalid Username')
+    return res.send("Invalid Username");
   } finally {
     if (conn) return conn.release();
   }
@@ -64,7 +63,7 @@ const registerUser = async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    console.log('register user api activated');
+    console.log("register user api activated");
     let name = req.body.name;
     let email = req.body.email;
     let username = req.body.username;
@@ -72,114 +71,146 @@ const registerUser = async (req, res) => {
 
     const usernameExist = new Promise(async (resolve, reject) => {
       const existUserQuery = `SELECT COUNT(*) as existUsers FROM user WHERE username=?`;
-      const existUserQueryResult = await pool.query(existUserQuery, username)
-      const existUserVal = Number(existUserQueryResult[0].existUsers.toString());
-      if (existUserVal > 0) reject(new Error('DUPLICATE_USERNAME'))
-      resolve()
-    })
+      const existUserQueryResult = await pool.query(existUserQuery, username);
+      const existUserVal = Number(
+        existUserQueryResult[0].existUsers.toString()
+      );
+      if (existUserVal > 0) reject(new Error("DUPLICATE_USERNAME"));
+      resolve();
+    });
 
     const emailExist = new Promise(async (resolve, reject) => {
       const existEmailQuery = `SELECT COUNT(*) as existEmail FROM user WHERE email=?`;
-      const existEmailQueryResult = await pool.query(existEmailQuery, email)
-      const existEmailVal = Number(existEmailQueryResult[0].existEmail.toString());
-      if (existEmailVal > 0) reject(new Error('DUPLICATE_EMAIL'))
-      resolve()
-    })
+      const existEmailQueryResult = await pool.query(existEmailQuery, email);
+      const existEmailVal = Number(
+        existEmailQueryResult[0].existEmail.toString()
+      );
+      if (existEmailVal > 0) reject(new Error("DUPLICATE_EMAIL"));
+      resolve();
+    });
 
-    Promise.all([usernameExist, emailExist]).then(() => {
-      if (password) {
-        bcrypt.hash(password, 10)
-          .then(async hashedPassword => {
-            const sqlQuery = `INSERT INTO user (name, email, username, password) VALUES(?,?,?,?)`;
-            const result = await pool.query(sqlQuery, [name, email, username, hashedPassword]);
-            console.log(result);
-            res.json({ userid: Number(result.insertId.toString()) });
-          }).catch(error => {
-            return res.status(500).send({
-              error: "unable to hash password"
+    Promise.all([usernameExist, emailExist])
+      .then(() => {
+        if (password) {
+          bcrypt
+            .hash(password, 10)
+            .then(async (hashedPassword) => {
+              const sqlQuery = `INSERT INTO user (name, email, username, password) VALUES(?,?,?,?)`;
+              const result = await pool.query(sqlQuery, [
+                name,
+                email,
+                username,
+                hashedPassword,
+              ]);
+              console.log(result);
+              res.json({ userid: Number(result.insertId.toString()) });
             })
-          })
-      }
-
-    }).catch(error => {
-      if (error.message === 'DUPLICATE_USERNAME')
-        res.send('duplicate username found')
-      else if (error.message === 'DUPLICATE_EMAIL')
-        res.send('duplicate email found')
-      else res.send('unkown error found')
-    })
-
+            .catch((error) => {
+              return res.status(500).send({
+                error: "unable to hash password",
+              });
+            });
+        }
+      })
+      .catch((error) => {
+        if (error.message === "DUPLICATE_USERNAME")
+          res.send("duplicate username found");
+        else if (error.message === "DUPLICATE_EMAIL")
+          res.send("duplicate email found");
+        else res.send("unkown error found");
+      });
   } catch (err) {
-    return res.send(err)
+    return res.send(err);
   } finally {
     if (conn) return conn.release();
   }
-}
+};
 
 const loginUser = async (req, res) => {
   let conn;
   try {
     let username = req.body.username;
     let password = req.body.password;
-    let result
+    let result;
     conn = await pool.getConnection();
-    console.log('login api is active');
+    console.log("login api is active");
     const checkUser = new Promise(async (resolve, reject) => {
-      const sqlQuery = `SELECT * FROM user WHERE username=?`
-      result = await pool.query(sqlQuery, username)
+      const sqlQuery = `SELECT * FROM user WHERE username=?`;
+      result = await pool.query(sqlQuery, username);
       //res.send('ok')
-      resolve()
-    })
+      resolve();
+    });
 
-    Promise.all([checkUser]).then(async () => {
-      if (result.length > 0) {
-        const querypass = result[0].password;
-        await bcrypt.compare(password, querypass).then((passwordCheck)=>{
-          if(!passwordCheck) return res.status(200).send({error: "Wrong Password!!"})
-          const token = jwt.sign({
-            userid: result[0]._id,
-            username: result[0].username,
-          }, ENV.JWT_SECRET, { expiresIn: "24h" });
-          return res.status(200).send({
-            msg: "Login Successful...",
-            username: result[0].username,
-            token
-          })
-        });
-      }
-      else res.json({"msg" : "NO_USERNAME_FOUND"})
-    }).catch(err => {
-      res.send(err.message)
-    })
-  }
-  catch (err) {
+    Promise.all([checkUser])
+      .then(async () => {
+        if (result.length > 0) {
+          const querypass = result[0].password;
+          await bcrypt.compare(password, querypass).then((passwordCheck) => {
+            if (!passwordCheck)
+              return res.status(200).send({ error: "Wrong Password!!" });
+            const token = jwt.sign(
+              {
+                userid: result[0]._id,
+                username: result[0].username,
+              },
+              ENV.JWT_SECRET,
+              { expiresIn: "24h" }
+            );
+            return res.status(200).send({
+              msg: "Login Successful...",
+              username: result[0].username,
+              token,
+            });
+          });
+        } else res.json({ msg: "NO_USERNAME_FOUND" });
+      })
+      .catch((err) => {
+        res.send(err.message);
+      });
+  } catch (err) {
     return res.send(err);
   } finally {
     if (conn) conn.release();
   }
-}
+};
 
-const updateUser = async(req,res) =>{
-  try{
+const updateUser = async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    console.log("update api activated");
     const id = req.query.id;
-    if(id){
-      const body = req.body;
-      const sqlQuery = `UPDATE user SET (name=?,email=?,username=?) WHERE id=?`;
-      const result = await pool.query(sqlQuery, (err, result)=>{
-        if(err){
-          console.log(err)
-          res.send("ERROR")
-        }else{
-          res.send(result)
-          console.log('UPDATING')
-        }
-      });
-
+    if (id) {
+      const checksqlQuery = `SELECT * FROM user WHERE id=?`;
+      let checkresult = await pool.query(checksqlQuery, id);
+      if (checkresult.length === 0) {
+        throw new Error("WRONG_ID");
+      }
+      const name = req.body.name;
+      const email = req.body.email;
+      const username = req.body.username;
+      if (!name || !email || !username) {
+        throw new Error("ENTER_ALL_FIELDS");
+      }
+      const sqlQuery = `UPDATE user SET name='${name}',email='${email}',username='${username}' WHERE id=?`;
+      const result = await pool.query(sqlQuery, id);
+      console.log(result);
+      if (Number(result.insertId.toString()) >= 0) res.json({ msg: "success" });
+    } else {
+      throw new Error("INVALID_QUERY");
     }
-    }catch(error){
-      return res.status(401).send({error: 'User not found'})
-    }
-}
+  } catch (error) {
+    return res.status(401).send({ error: error.message });
+  } finally {
+    if (conn) conn.release();
+  }
+};
 
-
-module.exports = { getAllUser, getSpecificUser, addUser, registerUser, loginUser, updateUser };
+module.exports = {
+  getAllUser,
+  getSpecificUser,
+  addUser,
+  registerUser,
+  loginUser,
+  updateUser,
+};
