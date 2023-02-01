@@ -17,7 +17,7 @@ userRouter.get("/user/:username", getSpecificUser);
 
 //Put method
 
-userRouter.put("/update", updateUser);
+userRouter.put("/update",Auth, updateUser);
 
 //Post method
 userRouter.route('/login').post(loginUser)

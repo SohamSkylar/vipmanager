@@ -1,13 +1,20 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const ENV = require('../config.js')
 
-const auth = async(req,res, next)=>{
+const auth = async(req,res)=>{
     try{
 
 
-        const token = req.headers.authorization;
-        res.json(token);
+        const token = req.headers.authorization.split(" ")[1];
+
+        const decodedToken = await jwt.verify(token, ENV.JWT_SECRET);
+
+        req.user = decodedToken;
+        res.json(decodedToken);
+
     }catch(error){
-        res.staus(401).json({error: "Authentication Failed..."})
+        res.status(401).json({error: "Authentication Failed..."})
 
     }
 }

@@ -150,7 +150,7 @@ const loginUser = async (req, res) => {
               return res.status(200).send({ error: "Wrong Password!!" });
             const token = jwt.sign(
               {
-                userid: result[0]._id,
+                userid: result[0].id,
                 username: result[0].username,
               },
               ENV.JWT_SECRET,
