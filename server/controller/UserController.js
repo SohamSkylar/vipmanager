@@ -1,5 +1,7 @@
 const pool = require("../database/conn");
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken');
+const ENV = require('../config.js');
 
 const getAllUser = async (req, res) => {
   let conn;
@@ -127,8 +129,18 @@ const loginUser = async (req, res) => {
     Promise.all([checkUser]).then(async () => {
       if (result.length > 0) {
         const querypass = result[0].password;
-        const checkpass = await bcrypt.compare(password, querypass);
-        res.json({"msg":checkpass})
+        await bcrypt.compare(password, querypass).then((passwordCheck)=>{
+          if(!passwordCheck) return res.status(200).send({error: "Wrong Password!!"})
+          const token = jwt.sign({
+            userid: result[0]._id,
+            username: result[0].username,
+          }, ENV.JWT_SECRET, { expiresIn: "24h" });
+          return res.status(200).send({
+            msg: "Login Successful...",
+            username: result[0].username,
+            token
+          })
+        });
       }
       else res.json({"msg" : "NO_USERNAME_FOUND"})
     }).catch(err => {
