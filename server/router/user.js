@@ -1,4 +1,5 @@
 const express = require("express");
+const Auth = require('../middleware/auth.js')
 const {
   getAllUser,
   getSpecificUser,
@@ -11,7 +12,7 @@ const userRouter = express.Router();
 
 //Get method
 userRouter.get("/user", getAllUser);
-userRouter.get("/user/:id", getSpecificUser);
+userRouter.get("/user/:username", getSpecificUser);
 
 //Put method
 
