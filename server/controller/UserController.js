@@ -177,12 +177,12 @@ const loginUser = async (req, res) => {
 const updateUser = async (req, res) => {
   let conn;
   try {
+    const { userid } = req.user;
     conn = await pool.getConnection();
     console.log("update api activated");
-    const id = req.query.id;
-    if (id) {
+    if (userid) {
       const checksqlQuery = `SELECT * FROM user WHERE id=?`;
-      let checkresult = await pool.query(checksqlQuery, id);
+      let checkresult = await pool.query(checksqlQuery, userid);
       if (checkresult.length === 0) {
         throw new Error("WRONG_ID");
       }
@@ -193,7 +193,7 @@ const updateUser = async (req, res) => {
         throw new Error("ENTER_ALL_FIELDS");
       }
       const sqlQuery = `UPDATE user SET name='${name}',email='${email}',username='${username}' WHERE id=?`;
-      const result = await pool.query(sqlQuery, id);
+      const result = await pool.query(sqlQuery, userid);
       console.log(result);
       if (Number(result.insertId.toString()) >= 0) res.json({ msg: "success" });
     } else {
