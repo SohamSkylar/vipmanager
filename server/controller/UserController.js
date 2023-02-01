@@ -1,11 +1,12 @@
 const pool = require("../database/conn");
+const bcrypt = require('bcrypt')
 
 const getAllUser = async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
     console.log("db connected");
-    const sqlQuery = `SELECT * FROM test`;
+    const sqlQuery = `SELECT * FROM user`;
     let result = await pool.query(sqlQuery);
     res.json(result);
 
@@ -44,7 +45,7 @@ const addUser = async (req, res) => {
     const sqlQuery = `INSERT INTO test (name, email) VALUES (?,?)`;
     const result = await pool.query(sqlQuery, [name, email]);
     console.log(result);
-    res.json({userid : Number(result.insertId.toString())});
+    res.json({ userid: Number(result.insertId.toString()) });
   } catch (err) {
     throw err;
   } finally {
@@ -52,4 +53,93 @@ const addUser = async (req, res) => {
   }
 };
 
-module.exports = { getAllUser, getSpecificUser, addUser };
+const registerUser = async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    console.log('register user api activated');
+    let name = req.body.name;
+    let email = req.body.email;
+    let username = req.body.username;
+    let password = req.body.password;
+
+    const usernameExist = new Promise(async (resolve, reject) => {
+      const existUserQuery = `SELECT COUNT(*) as existUsers FROM user WHERE username=?`;
+      const existUserQueryResult = await pool.query(existUserQuery, username)
+      const existUserVal = Number(existUserQueryResult[0].existUsers.toString());
+      if (existUserVal > 0) reject(new Error('DUPLICATE_USERNAME'))
+      resolve()
+    })
+
+    const emailExist = new Promise(async (resolve, reject) => {
+      const existEmailQuery = `SELECT COUNT(*) as existEmail FROM user WHERE email=?`;
+      const existEmailQueryResult = await pool.query(existEmailQuery, email)
+      const existEmailVal = Number(existEmailQueryResult[0].existEmail.toString());
+      if (existEmailVal > 0) reject(new Error('DUPLICATE_EMAIL'))
+      resolve()
+    })
+
+    Promise.all([usernameExist, emailExist]).then(() => {
+      if (password) {
+        bcrypt.hash(password, 10)
+          .then(async hashedPassword => {
+            const sqlQuery = `INSERT INTO user (name, email, username, password) VALUES(?,?,?,?)`;
+            const result = await pool.query(sqlQuery, [name, email, username, hashedPassword]);
+            console.log(result);
+            res.json({ userid: Number(result.insertId.toString()) });
+          }).catch(error => {
+            return res.status(500).send({
+              error: "unable to hash password"
+            })
+          })
+      }
+
+    }).catch(error => {
+      if (error.message === 'DUPLICATE_USERNAME')
+        res.send('duplicate username found')
+      else if (error.message === 'DUPLICATE_EMAIL')
+        res.send('duplicate email found')
+      else res.send('unkown error found')
+    })
+
+  } catch (err) {
+    return res.send(err)
+  } finally {
+    if (conn) return conn.release();
+  }
+}
+
+const loginUser = async (req, res) => {
+  let conn;
+  try {
+    let username = req.body.username;
+    let password = req.body.password;
+    let result
+    conn = await pool.getConnection();
+    console.log('login api is active');
+    const checkUser = new Promise(async (resolve, reject) => {
+      const sqlQuery = `SELECT * FROM user WHERE username=?`
+      result = await pool.query(sqlQuery, username)
+      //res.send('ok')
+      resolve()
+    })
+
+    Promise.all([checkUser]).then(async () => {
+      if (result.length > 0) {
+        const querypass = result[0].password;
+        const checkpass = await bcrypt.compare(password, querypass);
+        res.json({"msg":checkpass})
+      }
+      else res.json({"msg" : "NO_USERNAME_FOUND"})
+    }).catch(err => {
+      res.send(err.message)
+    })
+  }
+  catch (err) {
+    return res.send(err);
+  } finally {
+    if (conn) conn.release();
+  }
+}
+
+module.exports = { getAllUser, getSpecificUser, addUser, registerUser, loginUser };

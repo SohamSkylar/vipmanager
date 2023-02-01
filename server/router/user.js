@@ -3,6 +3,8 @@ const {
   getAllUser,
   getSpecificUser,
   addUser,
+  registerUser,
+  loginUser,
 } = require("../controller/UserController");
 
 const userRouter = express.Router();
@@ -13,9 +15,10 @@ userRouter.get("/user/:id", getSpecificUser);
 
 //Put method
 
-//Post method
-userRouter.route('/login').post()
 
+//Post method
+userRouter.route('/login').post(loginUser)
+userRouter.route("/register").post(registerUser)
 
 //delete method
 
