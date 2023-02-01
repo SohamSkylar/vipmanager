@@ -159,5 +159,27 @@ const loginUser = async (req, res) => {
   }
 }
 
+const updateUser = async(req,res) =>{
+  try{
+    const id = req.query.id;
+    if(id){
+      const body = req.body;
+      const sqlQuery = `UPDATE user SET (name=?,email=?,username=?) WHERE id=?`;
+      const result = await pool.query(sqlQuery, (err, result)=>{
+        if(err){
+          console.log(err)
+          res.send("ERROR")
+        }else{
+          res.send(result)
+          console.log('UPDATING')
+        }
+      });
 
-module.exports = { getAllUser, getSpecificUser, addUser, registerUser, loginUser };
+    }
+    }catch(error){
+      return res.status(401).send({error: 'User not found'})
+    }
+}
+
+
+module.exports = { getAllUser, getSpecificUser, addUser, registerUser, loginUser, updateUser };

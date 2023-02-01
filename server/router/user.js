@@ -6,6 +6,7 @@ const {
   addUser,
   registerUser,
   loginUser,
+  updateUser
 } = require("../controller/UserController");
 
 const userRouter = express.Router();
@@ -16,6 +17,7 @@ userRouter.get("/user/:username", getSpecificUser);
 
 //Put method
 
+userRouter.put("/update", updateUser);
 
 //Post method
 userRouter.route('/login').post(loginUser)
