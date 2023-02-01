@@ -27,11 +27,16 @@ const getSpecificUser = async (req, res) => {
   try {
     conn = await pool.getConnection();
     console.log("db is active");
-    const sqlQuery = `SELECT * FROM user WHERE id=?`;
-    let result = await pool.query(sqlQuery, req.params.id);
-    res.json(result);
+    const sqlQuery = `SELECT * FROM user WHERE username=?`;
+    let result = await pool.query(sqlQuery, req.params.username);
+    if(result.length === 0 ){
+      res.send('No user found...')
+    }else{
+      res.json(result);
+
+    }
   } catch (err) {
-    throw err;
+    return res.send('Invalid Username')
   } finally {
     if (conn) return conn.release();
   }
@@ -153,5 +158,6 @@ const loginUser = async (req, res) => {
     if (conn) conn.release();
   }
 }
+
 
 module.exports = { getAllUser, getSpecificUser, addUser, registerUser, loginUser };
