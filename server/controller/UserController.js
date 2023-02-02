@@ -16,7 +16,7 @@ const getAllUser = async (req, res) => {
     //   res.json(users)
     // })
   } catch (err) {
-    throw err;
+    res.send(err.message);
   } finally {
     if (conn) return conn.release();
   }
@@ -35,7 +35,7 @@ const getSpecificUser = async (req, res) => {
       res.json(result);
     }
   } catch (err) {
-    return res.send("Invalid Username");
+    res.send("Invalid Username");
   } finally {
     if (conn) return conn.release();
   }
@@ -53,7 +53,7 @@ const addUser = async (req, res) => {
     console.log(result);
     res.json({ userid: Number(result.insertId.toString()) });
   } catch (err) {
-    throw err;
+    res.send(err.message);
   } finally {
     if (conn) return conn.release();
   }
@@ -120,7 +120,7 @@ const registerUser = async (req, res) => {
         else res.send("unkown error found");
       });
   } catch (err) {
-    return res.send(err);
+    res.send(err.message);
   } finally {
     if (conn) return conn.release();
   }
@@ -168,9 +168,9 @@ const loginUser = async (req, res) => {
         res.send(err.message);
       });
   } catch (err) {
-    return res.send(err);
+    res.send(err.message);
   } finally {
-    if (conn) conn.release();
+    if (conn) return conn.release();
   }
 };
 
@@ -200,9 +200,9 @@ const updateUser = async (req, res) => {
       throw new Error("INVALID_QUERY");
     }
   } catch (error) {
-    return res.status(401).send({ error: error.message });
+    res.status(401).send({ error: error.message });
   } finally {
-    if (conn) conn.release();
+    if (conn) return conn.release();
   }
 };
 
