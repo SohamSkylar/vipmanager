@@ -1,7 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const ENV = require("../config.js");
-const otpGenerator = require('otp-generator');
+const otpGenerator = require("otp-generator");
 const pool = require("../database/conn");
 
 const auth = async (req, res, next) => {
@@ -15,27 +15,31 @@ const auth = async (req, res, next) => {
   }
 };
 
-const localVariables = async(req, res, next) =>{
+const localVariables = async (req, res, next) => {
   req.app.locals = {
     OTP: null,
-    resetSession: false
-  }
+    resetSession: false,
+  };
   next();
-}
+};
 
-const verifyUser = async(req,res, next)=>{
+const verifyUser = async (req, res, next) => {
   let conn;
+
   try {
     conn = await pool.getConnection();
     console.log("db is active");
-    const sqlQuery = `SELECT * FROM user WHERE username=?`;
-    let result = await pool.query(sqlQuery, req.query.username);
-    if (result[0].length === 0) return res.send("Cant Find User...");
-    console.log(result)
-    next();
-
+    const existUserQuery = `SELECT COUNT(*) as existUsers FROM user WHERE username=?`;
+    const existUserQueryResult = await pool.query(
+      existUserQuery,
+      req.query.username
+    );
+    const existUserVal = Number(existUserQueryResult[0].existUsers.toString());
+    if (existUserVal === 1) next();
+    else if (existUserVal === 0) throw new Error("NO_USER_AVAILABLE");
+    else throw new Error("MULTIPLE_USER_AVAILABLE");
   } catch (err) {
-    return res.status(404).send({error: "Authentication Error"});
+    return res.status(404).send({ error: err.message });
   } finally {
     if (conn) return conn.release();
   }
@@ -44,5 +48,5 @@ const verifyUser = async(req,res, next)=>{
 module.exports = {
   auth,
   localVariables,
-  verifyUser
+  verifyUser,
 };

@@ -138,31 +138,31 @@ const loginUser = async (req, res) => {
       const sqlQuery = `SELECT * FROM user WHERE username=?`;
       result = await pool.query(sqlQuery, username);
       //res.send('ok')
-      resolve();
+      if (result.length === 0) reject(new Error("INVALID_USERNAME"));
+      else if (result.length > 1) reject(new Error("DUPLICATE_USERNAME"));
+      else resolve();
     });
 
     Promise.all([checkUser])
       .then(async () => {
-        if (result.length > 0) {
-          const querypass = result[0].password;
-          await bcrypt.compare(password, querypass).then((passwordCheck) => {
-            if (!passwordCheck)
-              return res.status(200).send({ error: "Wrong Password!!" });
-            const token = jwt.sign(
-              {
-                userid: result[0].id,
-                username: result[0].username,
-              },
-              ENV.JWT_SECRET,
-              { expiresIn: "24h" }
-            );
-            return res.status(200).send({
-              msg: "Login Successful...",
+        const querypass = result[0].password;
+        await bcrypt.compare(password, querypass).then((passwordCheck) => {
+          if (!passwordCheck)
+            return res.status(200).send({ error: "Wrong Password!!" });
+          const token = jwt.sign(
+            {
+              userid: result[0].id,
               username: result[0].username,
-              token,
-            });
+            },
+            ENV.JWT_SECRET,
+            { expiresIn: "24h" }
+          );
+          return res.status(200).send({
+            msg: "Login Successful...",
+            username: result[0].username,
+            token,
           });
-        } else res.json({ msg: "NO_USERNAME_FOUND" });
+        });
       })
       .catch((err) => {
         res.send(err.message);
@@ -206,9 +206,35 @@ const updateUser = async (req, res) => {
   }
 };
 
-const createResetSession = async(req,res)=>{
-  res.json('createResetSession Route')
-}
+const resetPassword = async (req, res) => {
+  let conn;
+  if (!req.app.locals.resetSession) return res.json({ msg: "OTP_EXPIRED" });
+  try {
+    conn = await pool.getConnection();
+
+    const { password } = req.body;
+    const { username } = req.query;
+
+    if (password) {
+      bcrypt
+        .hash(password, 10)
+        .then(async (hashedPassword) => {
+          const sqlQuery = `UPDATE user SET password=? WHERE username=?`;
+          const result = await pool.query(sqlQuery, [hashedPassword, username]);
+          if (Number(result.insertId.toString()) >= 0)
+            res.json({ msg: "success" });
+          req.app.locals.resetSession = false;
+        })
+        .catch((error) => {
+          return res.status(500).send({ error: error.message });
+        });
+    }
+  } catch (error) {
+    res.send(error.message);
+  } finally {
+    if (conn) return conn.release();
+  }
+};
 
 module.exports = {
   getAllUser,
@@ -217,5 +243,5 @@ module.exports = {
   registerUser,
   loginUser,
   updateUser,
-  createResetSession
+  resetPassword,
 };

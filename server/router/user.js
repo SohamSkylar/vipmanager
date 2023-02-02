@@ -1,5 +1,5 @@
 const express = require("express");
-const {localVariables, verifyUser, auth} = require("../middleware/auth.js");
+const { localVariables, verifyUser, auth } = require("../middleware/auth.js");
 
 const {
   getAllUser,
@@ -8,7 +8,7 @@ const {
   registerUser,
   loginUser,
   updateUser,
-  createResetSession,
+  resetPassword,
 } = require("../controller/UserController");
 const { generateOTP, verifyOTP } = require("../controller/OTPController.js");
 
@@ -17,16 +17,16 @@ const userRouter = express.Router();
 //Get method
 userRouter.get("/user", getAllUser);
 userRouter.get("/user/:username", getSpecificUser);
-userRouter.get("/generateOTP", verifyUser,localVariables,generateOTP);
+userRouter.get("/generateOTP", verifyUser, localVariables, generateOTP);
 userRouter.get("/verifyOTP", verifyOTP);
-userRouter.get("/createResetSession", createResetSession);
 
 //Put method
 
-userRouter.put("/update",auth, updateUser);
+userRouter.put("/update", auth, updateUser);
+userRouter.put("/resetPassword", verifyUser, resetPassword);
 
 //Post method
-userRouter.route("/login").post(verifyUser,loginUser);
+userRouter.route("/login").post(loginUser);
 userRouter.route("/register").post(registerUser);
 
 //delete method
