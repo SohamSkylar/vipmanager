@@ -206,6 +206,10 @@ const updateUser = async (req, res) => {
   }
 };
 
+const createResetSession = async(req,res)=>{
+  res.json('createResetSession Route')
+}
+
 module.exports = {
   getAllUser,
   getSpecificUser,
@@ -213,4 +217,5 @@ module.exports = {
   registerUser,
   loginUser,
   updateUser,
+  createResetSession
 };
