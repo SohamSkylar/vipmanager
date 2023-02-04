@@ -30,29 +30,35 @@ const Register = () => {
     validateOnChange: false,
     onSubmit: async (values) => {
       values = await Object.assign(values, { profilePic: file || "" });
-      let registerPromise = registerUser(values);
+      let registerPromise = await registerUser(values);
       if (
-        registerPromise.catch((status) => {
-          if (status === 409) return true;
-        })
+        registerPromise
+          .then((resolve) => {
+            toast.promise(registerPromise, {
+              loading: "registering...",
+              success: successFunc,
+              error: <b>Registration Failure Occured!</b>
+            })
+          }, (reject) => {
+              if(reject === 409){
+                toast.error("Username already Exists")
+              }else if(reject === 410){
+                toast.error("Email already Exists")
+              }
+            })
+          .catch((status) => {
+            if (status === 409) return true;
+          })
       ) {
         setErrorToast(true);
       } else {
         setErrorToast(false);
       }
-      toast.promise(registerPromise, {
-        loading: "registering...",
-        success: successFunc,
-        error: errorToast ? (
-          <b>Duplicate Username</b>
-        ) : (
-          <b>Registration Failure Occured!</b>
-        ),
-      });
+
     },
   });
 
-  const onUpload = async (e) => { 
+  const onUpload = async (e) => {
     const base64 = await convertToBase64(e.target.files[0]);
     setFile(base64);
     setImgReady(true);

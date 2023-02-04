@@ -116,7 +116,7 @@ const registerUser = async (req, res) => {
         if (error.message === "DUPLICATE_USERNAME")
           res.status(409).send("duplicate username found");
         else if (error.message === "DUPLICATE_EMAIL")
-          res.status(409).send("duplicate email found");
+          res.status(410).send("duplicate email found");
         else res.send("unkown error found");
       });
   } catch (err) {
@@ -159,7 +159,7 @@ const loginUser = async (req, res) => {
           );
           return res.status(200).send({
             msg: "Login Successful...",
-            username: result[0].username,
+            username: result[0].username, 
             token,
           });
         });
