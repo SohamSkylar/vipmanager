@@ -11,11 +11,10 @@ import { useNavigate } from "react-router-dom";
 const Register = () => {
   const [file, setFile] = useState("");
   const [imgReady, setImgReady] = useState(false);
-  const [errorToast, setErrorToast] = useState();
   const navigate = useNavigate();
 
   const successFunc = () => {
-    navigate('/');
+    setTimeout(()=>{navigate('/')},1500);
     return <b>Registered!</b>
   }
   const formik = useFormik({
@@ -30,30 +29,26 @@ const Register = () => {
     validateOnChange: false,
     onSubmit: async (values) => {
       values = await Object.assign(values, { profilePic: file || "" });
-      let registerPromise = await registerUser(values);
-      if (
-        registerPromise
-          .then((resolve) => {
+      let registerPromise = registerUser(values);     
+        registerPromise.then((resolve) => {     
             toast.promise(registerPromise, {
               loading: "registering...",
               success: successFunc,
               error: <b>Registration Failure Occured!</b>
             })
           }, (reject) => {
-              if(reject === 409){
+              console.log("reject: "+reject)
+              if(reject.includes("409")){
                 toast.error("Username already Exists")
-              }else if(reject === 410){
+              }else if(reject.includes("410")){
                 toast.error("Email already Exists")
+              }else{
+                toast.error('unknown error')
               }
             })
           .catch((status) => {
             if (status === 409) return true;
           })
-      ) {
-        setErrorToast(true);
-      } else {
-        setErrorToast(false);
-      }
 
     },
   });
