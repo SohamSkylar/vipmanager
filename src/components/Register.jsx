@@ -1,32 +1,58 @@
 import React from "react";
 import { TiUser } from "react-icons/ti";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
 import { registerUserValidate } from "../helper/validate";
 import { useState } from "react";
 import convertToBase64 from "../helper/convertToBase64.jsx";
+import { registerUser } from "../helper/apiEndpoints";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [file, setFile] = useState("");
   const [imgReady, setImgReady] = useState(false);
+  const [errorToast, setErrorToast] = useState();
+  const navigate = useNavigate();
 
+  const successFunc = () => {
+    navigate('/');
+    return <b>Registered!</b>
+  }
   const formik = useFormik({
     initialValues: {
       username: "",
       password: "",
       email: "",
-      fullName: ""
+      name: "",
     },
     validate: registerUserValidate,
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
       values = await Object.assign(values, { profilePic: file || "" });
-      // console.log(values);
+      let registerPromise = registerUser(values);
+      if (
+        registerPromise.catch((status) => {
+          if (status === 409) return true;
+        })
+      ) {
+        setErrorToast(true);
+      } else {
+        setErrorToast(false);
+      }
+      toast.promise(registerPromise, {
+        loading: "registering...",
+        success: successFunc,
+        error: errorToast ? (
+          <b>Duplicate Username</b>
+        ) : (
+          <b>Registration Failure Occured!</b>
+        ),
+      });
     },
   });
 
-  const onUpload = async (e) => {
+  const onUpload = async (e) => { 
     const base64 = await convertToBase64(e.target.files[0]);
     setFile(base64);
     setImgReady(true);
@@ -73,7 +99,7 @@ const Register = () => {
               <div className="gap-5 textbox flex flex-col items-center py-4 w-full">
                 <input
                   type="text"
-                  {...formik.getFieldProps("fullName")}
+                  {...formik.getFieldProps("name")}
                   placeholder="Full Name"
                   className="block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                 />

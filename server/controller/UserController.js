@@ -114,9 +114,9 @@ const registerUser = async (req, res) => {
       })
       .catch((error) => {
         if (error.message === "DUPLICATE_USERNAME")
-          res.send("duplicate username found");
+          res.status(409).send("duplicate username found");
         else if (error.message === "DUPLICATE_EMAIL")
-          res.send("duplicate email found");
+          res.status(409).send("duplicate email found");
         else res.send("unkown error found");
       });
   } catch (err) {
