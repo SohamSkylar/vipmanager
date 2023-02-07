@@ -9,10 +9,7 @@ export async function registerUser(userdetails) {
 
     // let { username, email } = userdetails;
     console.log(msg);
-    if (status === 409) {
-      return Promise.reject(status);
-    }
-    else if (status === 410) {
+    if (status === 409 || status === 410 || status === 411) {
       return Promise.reject(status);
     }
     return Promise.resolve(msg);
@@ -21,13 +18,28 @@ export async function registerUser(userdetails) {
   }
 }
 
-export async function updateUser(response){
-  try{
-    const token = await localStorage.getItem('token');
-    const data = await axios.put("http://localhost:8001/api/update", response, {headers: {"Authorization": `Bearer ${token}`}})
-    return Promise.resolve({data})
-  }catch(error){
-    return Promise.reject({error:" Couldn't Update User..."})
+export async function loginUser(userdetails) {
+  try {
+    const {
+      data: { msg, token },
+      status,
+    } = await axios.post("http://localhost:8001/api/login", userdetails);
+    if (status === 200) return Promise.resolve(token);
+    else return Promise.reject();
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+export async function updateUser(response) {
+  try {
+    const token = await localStorage.getItem("token");
+    const data = await axios.put("http://localhost:8001/api/update", response, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return Promise.resolve({ data });
+  } catch (error) {
+    return Promise.reject({ error: " Couldn't Update User..." });
   }
 }
 
@@ -46,7 +58,7 @@ export async function updateUser(response){
 // }
 
 // export async function getUser({ username }){
-//   try{  
+//   try{
 //     const {data} = await axios.get(`http://localhost:8001/api/user${username}`)
 //     return data;
 
@@ -55,4 +67,3 @@ export async function updateUser(response){
 // }
 
 // }
-

@@ -1,5 +1,5 @@
 const express = require("express");
-const { localVariables, verifyUser, auth } = require("../middleware/auth.js");
+const { localVariables, verifyUser, auth, checkDuplicateUser } = require("../middleware/auth.js");
 
 const {
   getAllUser,
@@ -27,7 +27,7 @@ userRouter.put("/resetPassword", verifyUser, resetPassword);
 
 //Post method
 userRouter.route("/login").post(loginUser);
-userRouter.route("/register").post(registerUser);
+userRouter.post("/register", checkDuplicateUser, registerUser);
 
 //delete method
 

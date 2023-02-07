@@ -1,9 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { TiUser } from "react-icons/ti";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
 import { userValidate } from "../helper/validate";
+import { loginUser } from "../helper/apiEndpoints";
 
 const Login = () => {
 
@@ -16,7 +17,16 @@ const Login = () => {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async values => {
-      console.log(values)
+      // console.log(values)
+      let loginPromise = loginUser(values);
+      toast.promise(loginPromise, {
+        loading: "logging in",
+        success: "logged in successfully",
+        error:  "login unsuccessful"
+      })
+      loginPromise.then(res => {
+        localStorage.setItem('token', res)
+      })
     }
   })
 

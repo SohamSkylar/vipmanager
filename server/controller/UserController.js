@@ -59,6 +59,73 @@ const addUser = async (req, res) => {
   }
 };
 
+// const registerUser = async (req, res) => {
+//   let conn;
+//   try {
+//     conn = await pool.getConnection();
+//     console.log("register user api activated");
+//     let name = req.body.name;
+//     let email = req.body.email;
+//     let username = req.body.username;
+//     let password = req.body.password;
+
+//     const usernameExist = new Promise(async (resolve, reject) => {
+//       const existUserQuery = `SELECT COUNT(*) as existUsers FROM user WHERE username=?`;
+//       const existUserQueryResult = await pool.query(existUserQuery, username);
+//       const existUserVal = Number(
+//         existUserQueryResult[0].existUsers.toString()
+//       );
+//       if (existUserVal > 0) reject(new Error("DUPLICATE_USERNAME"));
+//       resolve();
+//     });
+
+//     const emailExist = new Promise(async (resolve, reject) => {
+//       const existEmailQuery = `SELECT COUNT(*) as existEmail FROM user WHERE email=?`;
+//       const existEmailQueryResult = await pool.query(existEmailQuery, email);
+//       const existEmailVal = Number(
+//         existEmailQueryResult[0].existEmail.toString()
+//       );
+//       if (existEmailVal > 0) reject(new Error("DUPLICATE_EMAIL"));
+//       resolve();
+//     });
+
+//     Promise.all([usernameExist, emailExist])
+//       .then(() => {
+//         if (password) {
+//           bcrypt
+//             .hash(password, 10)
+//             .then(async (hashedPassword) => {
+//               const sqlQuery = `INSERT INTO user (name, email, username, password) VALUES(?,?,?,?)`;
+//               const result = await pool.query(sqlQuery, [
+//                 name,
+//                 email,
+//                 username,
+//                 hashedPassword,
+//               ]);
+//               console.log(result);
+//               res.json({ userid: Number(result.insertId.toString()) });
+//             })
+//             .catch((error) => {
+//               return res.status(500).send({
+//                 error: "unable to hash password",
+//               });
+//             });
+//         }
+//       })
+//       .catch((error) => {
+//         if (error.message === "DUPLICATE_USERNAME")
+//           res.status(409).send("duplicate username found");
+//         else if (error.message === "DUPLICATE_EMAIL")
+//           res.status(410).send("duplicate email found");
+//         else res.send("unkown error found");
+//       });
+//   } catch (err) {
+//     res.send(err.message);
+//   } finally {
+//     if (conn) return conn.release();
+//   }
+// };
+
 const registerUser = async (req, res) => {
   let conn;
   try {
@@ -69,56 +136,26 @@ const registerUser = async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
 
-    const usernameExist = new Promise(async (resolve, reject) => {
-      const existUserQuery = `SELECT COUNT(*) as existUsers FROM user WHERE username=?`;
-      const existUserQueryResult = await pool.query(existUserQuery, username);
-      const existUserVal = Number(
-        existUserQueryResult[0].existUsers.toString()
-      );
-      if (existUserVal > 0) reject(new Error("DUPLICATE_USERNAME"));
-      resolve();
-    });
-
-    const emailExist = new Promise(async (resolve, reject) => {
-      const existEmailQuery = `SELECT COUNT(*) as existEmail FROM user WHERE email=?`;
-      const existEmailQueryResult = await pool.query(existEmailQuery, email);
-      const existEmailVal = Number(
-        existEmailQueryResult[0].existEmail.toString()
-      );
-      if (existEmailVal > 0) reject(new Error("DUPLICATE_EMAIL"));
-      resolve();
-    });
-
-    Promise.all([usernameExist, emailExist])
-      .then(() => {
-        if (password) {
-          bcrypt
-            .hash(password, 10)
-            .then(async (hashedPassword) => {
-              const sqlQuery = `INSERT INTO user (name, email, username, password) VALUES(?,?,?,?)`;
-              const result = await pool.query(sqlQuery, [
-                name,
-                email,
-                username,
-                hashedPassword,
-              ]);
-              console.log(result);
-              res.json({ userid: Number(result.insertId.toString()) });
-            })
-            .catch((error) => {
-              return res.status(500).send({
-                error: "unable to hash password",
-              });
-            });
-        }
-      })
-      .catch((error) => {
-        if (error.message === "DUPLICATE_USERNAME")
-          res.status(409).send("duplicate username found");
-        else if (error.message === "DUPLICATE_EMAIL")
-          res.status(410).send("duplicate email found");
-        else res.send("unkown error found");
-      });
+    if (password) {
+      bcrypt
+        .hash(password, 10)
+        .then(async (hashedPassword) => {
+          const sqlQuery = `INSERT INTO user (name, email, username, password) VALUES(?,?,?,?)`;
+          const result = await pool.query(sqlQuery, [
+            name,
+            email,
+            username,
+            hashedPassword,
+          ]);
+          console.log(result);
+          res.json({ userid: Number(result.insertId.toString()) });
+        })
+        .catch((error) => {
+          return res.status(500).send({
+            error: "unable to hash password",
+          });
+        });
+    }
   } catch (err) {
     res.send(err.message);
   } finally {
@@ -148,7 +185,7 @@ const loginUser = async (req, res) => {
         const querypass = result[0].password;
         await bcrypt.compare(password, querypass).then((passwordCheck) => {
           if (!passwordCheck)
-            return res.status(200).send({ error: "Wrong Password!!" });
+            return res.status(400).send({ error: "Wrong Password!!" });
           const token = jwt.sign(
             {
               userid: result[0].id,
@@ -159,13 +196,13 @@ const loginUser = async (req, res) => {
           );
           return res.status(200).send({
             msg: "Login Successful...",
-            username: result[0].username, 
+            username: result[0].username,
             token,
           });
         });
       })
       .catch((err) => {
-        res.send(err.message);
+        res.status(400).send(err.message);
       });
   } catch (err) {
     res.send(err.message);

@@ -14,9 +14,10 @@ const Register = () => {
   const navigate = useNavigate();
 
   const successFunc = () => {
-    setTimeout(()=>{navigate('/')},1500);
-    return <b>Registered!</b>
-  }
+    setTimeout(() => {
+      navigate("/");
+    }, 1500);
+  };
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -28,28 +29,43 @@ const Register = () => {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
-      values = await Object.assign(values, { profilePic: file || "" });
-      let registerPromise = registerUser(values);     
-        registerPromise.then((resolve) => {     
-            toast.promise(registerPromise, {
-              loading: "registering...",
-              success: successFunc,
-              error: <b>Registration Failure Occured!</b>
-            })
-          }, (reject) => {
-              console.log("reject: "+reject)
-              if(reject.includes("409")){
-                toast.error("Username already Exists")
-              }else if(reject.includes("410")){
-                toast.error("Email already Exists")
-              }else{
-                toast.error('unknown error')
-              }
-            })
-          .catch((status) => {
-            if (status === 409) return true;
-          })
+      let toastBox = toast.loading("Loading...");
 
+      values = await Object.assign(values, { profilePic: file || "" });
+      let registerPromise = registerUser(values);
+      registerPromise
+        .then(
+          (resolve) => {
+            toast.success('Registered!!!', {
+              id: toastBox
+            })
+            successFunc()
+          },
+          (reject) => {
+            console.log("reject: " + reject);
+            if (reject.includes("409")) {
+              toast.error("Username already Exists", {
+                id: toastBox,
+              });
+            } else if (reject.includes("410")) {
+              toast.error("Email already Exists", {
+                id: toastBox,
+              });
+            } else if (reject.includes("411")) {
+              toast.error("Username and Email already Exists", {
+                id: toastBox,
+              });
+            }
+             else {
+              toast.error("unknown error", {
+                id: toastBox,
+              });
+            }
+          }
+        )
+        .catch((status) => {
+          if (status === 409) return true;
+        });
     },
   });
 

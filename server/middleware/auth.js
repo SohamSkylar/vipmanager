@@ -45,8 +45,55 @@ const verifyUser = async (req, res, next) => {
   }
 };
 
+const checkDuplicateUser = async (req, res, next) => {
+  let conn;
+  try {
+    let email = req.body.email;
+    let username = req.body.username;
+    let duplicateUsername = false,
+      duplicateEmail = false;
+    new Promise(async (resolve, reject) => {
+      const existUserQuery = `SELECT COUNT(*) as existUsers FROM user WHERE username=?`;
+      const existUserQueryResult = await pool.query(existUserQuery, username);
+      const existUserVal = Number(
+        existUserQueryResult[0].existUsers.toString()
+      );
+      if (existUserVal > 0) duplicateUsername = true;
+
+      const existEmailQuery = `SELECT COUNT(*) as existEmail FROM user WHERE email=?`;
+      const existEmailQueryResult = await pool.query(existEmailQuery, email);
+      const existEmailVal = Number(
+        existEmailQueryResult[0].existEmail.toString()
+      );
+      if (existEmailVal > 0) duplicateEmail = true;
+      if (duplicateEmail && duplicateUsername)
+        reject(new Error("DUPLICATE_EMAIL_AND_USERNAME"));
+      else if (duplicateEmail) reject(new Error("DUPLICATE_EMAIL"));
+      else if (duplicateUsername) reject(new Error("DUPLICATE_USERNAME"));
+      resolve();
+    })
+      .then(() => {
+        next();
+      })
+      .catch((err) => {
+        if (err.message === "DUPLICATE_EMAIL_AND_USERNAME")
+          res.status(411).send("Email and username exists");
+        else if (err.message === "DUPLICATE_EMAIL")
+          res.status(410).send("duplicate email exists");
+        else if (err.message === "DUPLICATE_USERNAME")
+          res.status(409).send("duplicate username exists");
+        else res.status(500).send('unknown error')
+      });
+  } catch (error) {
+    res.status(404).send({ error: error.message });
+  } finally {
+    if (conn) return conn.release();
+  }
+};
+
 module.exports = {
   auth,
   localVariables,
   verifyUser,
+  checkDuplicateUser,
 };
