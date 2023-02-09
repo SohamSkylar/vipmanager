@@ -1,8 +1,8 @@
 import React from "react";
 
-import Navbar from "components/Navbar.js";
-import Sidebar from "components/Sidebar.js";
-export default function Dashboard() {
+import Navbar from "./components/Navbar.js";
+import Sidebar from "./components/Sidebar.js";
+const Dashboard = () => {
   return (
     <>
       <Sidebar />
@@ -144,3 +144,5 @@ export default function Dashboard() {
     </>
   );
 }
+
+export default Dashboard;

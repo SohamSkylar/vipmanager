@@ -7,7 +7,7 @@ import Recovery from './components/Recovery.jsx'
 import Reset from './components/Reset.jsx'
 import Register from './components/Register.jsx'
 import PageNotFound from './components/PageNotFound.jsx'
-import Homepage from './screens/homepage/Homepage';
+import Dashboard from './screens/homepage/Dashboard';
 
 const router = createBrowserRouter([
   {
@@ -36,7 +36,7 @@ const router = createBrowserRouter([
   },
   {
     path : '/',
-    element : <Homepage/>
+    element : <Dashboard/>
   },
 ])
 

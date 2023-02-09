@@ -1,7 +1,7 @@
 import React from "react";
 import { createPopper } from "@popperjs/core";
 
-const UserDropdown = () => {
+const NotificationDropdown = () => {
   // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
   const btnDropdownRef = React.createRef();
@@ -18,7 +18,7 @@ const UserDropdown = () => {
   return (
     <>
       <a
-        className="text-blueGray-500 block"
+        className="text-blueGray-500 block py-1 px-3"
         href="#pablo"
         ref={btnDropdownRef}
         onClick={e => {
@@ -26,15 +26,7 @@ const UserDropdown = () => {
           dropdownPopoverShow ? closeDropdownPopover() : openDropdownPopover();
         }}
       >
-        <div className="items-center flex">
-          <span className="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full">
-            <img
-              alt="..."
-              className="w-full rounded-full align-middle border-none shadow-lg"
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-            />
-          </span>
-        </div>
+        <i className="fas fa-bell"></i>
       </a>
       <div
         ref={popoverDropdownRef}
@@ -86,4 +78,4 @@ const UserDropdown = () => {
   );
 };
 
-export default UserDropdown;
+export default NotificationDropdown;
