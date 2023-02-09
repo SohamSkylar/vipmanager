@@ -1,45 +1,62 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import "./navBar.css";
-import { activeUser } from "../../../helper/UserApi";
-import { useNavigate } from "react-router-dom";
 
 const navigation = [
-  { name: "Dashboard", href: "#", current: true },
-  { name: "VIP Status", href: "#", current: false },
-  { name: "About Us", href: "#", current: false },
-  { name: "Contact Us", href: "#", current: false },
+  { name: "Dashboard", href: "/", current: true },
+  { name: "VIP Status", href: "/vipstatus", current: false },
+  { name: "About Us", href: "/about", current: false },
+  { name: "Contact Us", href: "/contact", current: false },
 ];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const NavBar = () => {
-
+const NavBar = ({AuthTypeVal}) => {
   const deleteToken = () => {
-    localStorage.removeItem('token')
-  }
+    localStorage.removeItem("token");
+  };
 
-  const navigate = useNavigate();
-  useEffect(() => { 
-    const activeUserPromise = activeUser();
-    activeUserPromise
-      .then((status) => {
-        console.log(status)
-        if (status===201) console.log("user active");
-         else console.log("token expired");
-      },() => {
-         console.log("invalid token");
-         navigate("/login");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  });
-
+  const AuthTypeFunc = () => {
+    if (AuthTypeVal) {
+      return (
+        <Menu.Item>
+          {({ active }) => (
+            <a
+              href="/"
+              onClick={deleteToken}
+              className={classNames(
+                active ? "bg-gray-100" : "",
+                "block px-4 py-2 text-sm text-gray-700"
+              )}
+            >
+              Sign out
+            </a>
+          )}
+        </Menu.Item>
+      );
+    } else {
+      return (
+        <Menu.Item>
+          {({ active }) => (
+            <a
+              href="/login"
+              className={classNames(
+                active ? "bg-gray-100" : "",
+                "block px-4 py-2 text-sm text-gray-700"
+              )}
+            >
+              Sign in
+            </a>
+          )}
+        </Menu.Item>
+      );
+    }
+  };
+  
   return (
     <Disclosure as="nav" className="bg-gray-800 my-5 rounded-full navBarCss">
       {({ open }) => (
@@ -124,7 +141,7 @@ const NavBar = () => {
                       <Menu.Item>
                         {({ active }) => (
                           <a
-                            href="#"
+                            href="/profile"
                             className={classNames(
                               active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"
@@ -137,7 +154,7 @@ const NavBar = () => {
                       <Menu.Item>
                         {({ active }) => (
                           <a
-                            href="#"
+                            href="/settings"
                             className={classNames(
                               active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"
@@ -147,20 +164,7 @@ const NavBar = () => {
                           </a>
                         )}
                       </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="/login"
-                            onClick={deleteToken}
-                            className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700"
-                            )}
-                          >
-                            Sign out
-                          </a>
-                        )}
-                      </Menu.Item>
+                      {AuthTypeFunc()}
                     </Menu.Items>
                   </Transition>
                 </Menu>

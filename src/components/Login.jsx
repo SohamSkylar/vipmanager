@@ -14,7 +14,7 @@ const Login = () => {
     setTimeout(() => {
       navigate("/");
     }, 1500);
-    return <b>Logged in Succesfully!</b>
+    return <b>Logged in Successfully!</b>
   };
 
   const formik = useFormik({

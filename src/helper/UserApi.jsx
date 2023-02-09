@@ -48,7 +48,7 @@ export async function updateUser(response) {
 export async function activeUser() {
   try {
     const userToken = await localStorage.getItem("token");
-    const { data, status } = await axios.get(`${BASE_URL}/auth`, {
+    const { status } = await axios.get(`${BASE_URL}/auth`, {
       headers: { Authorization: `Bearer ${userToken}` },
     });
     return Promise.resolve(status);

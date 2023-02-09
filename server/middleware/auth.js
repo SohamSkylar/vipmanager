@@ -11,7 +11,7 @@ const auth = async (req, res, next) => {
     req.user = decodedToken;
     next();
   } catch (error) {
-    res.status(401).json({ error: "Authentication Failed..." });
+    res.status(202).send("Please login");
   }
 };
 
