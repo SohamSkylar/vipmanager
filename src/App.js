@@ -7,10 +7,11 @@ import Recovery from './components/Recovery.jsx'
 import Reset from './components/Reset.jsx'
 import Register from './components/Register.jsx'
 import PageNotFound from './components/PageNotFound.jsx'
+import Homepage from './screens/homepage/Homepage';
 
 const router = createBrowserRouter([
   {
-    path : '/',
+    path : '/login',
     element : <Login/>
   },
   {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
   {
     path : '/profile',
     element : <Profile/>
+  },
+  {
+    path : '/',
+    element : <Homepage/>
   },
 ])
 

@@ -57,7 +57,7 @@ const Recovery = () => {
             <div className="text-center py-4">
               <span className="text-gray-500">
               Go back?
-                <a href="/" className="text-red-500 pl-1">
+                <a href="/login" className="text-red-500 pl-1">
                   Login
                 </a>
               </span>

@@ -1,11 +1,13 @@
 import axios from "axios";
 
+const BASE_URL = "http://localhost:8001/api";
+
 export async function registerUser(userdetails) {
   try {
     const {
       data: { msg },
       status,
-    } = await axios.post("http://localhost:8001/api/register", userdetails);
+    } = await axios.post(`${BASE_URL}/register`, userdetails);
 
     // let { username, email } = userdetails;
     console.log(msg);
@@ -23,7 +25,7 @@ export async function loginUser(userdetails) {
     const {
       data: { msg, token },
       status,
-    } = await axios.post("http://localhost:8001/api/login", userdetails);
+    } = await axios.post(`${BASE_URL}/login`, userdetails);
     if (status === 200) return Promise.resolve(token);
     else return Promise.reject();
   } catch (error) {
@@ -34,12 +36,24 @@ export async function loginUser(userdetails) {
 export async function updateUser(response) {
   try {
     const token = await localStorage.getItem("token");
-    const data = await axios.put("http://localhost:8001/api/update", response, {
+    const data = await axios.put(`${BASE_URL}/update`, response, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return Promise.resolve({ data });
   } catch (error) {
     return Promise.reject({ error: " Couldn't Update User..." });
+  }
+}
+
+export async function activeUser() {
+  try {
+    const userToken = await localStorage.getItem("token");
+    const { data, status } = await axios.get(`${BASE_URL}/auth`, {
+      headers: { Authorization: `Bearer ${userToken}` },
+    });
+    return Promise.resolve(status);
+  } catch (err) {
+    return Promise.reject({ error: "Auth Failed" });
   }
 }
 

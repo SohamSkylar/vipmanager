@@ -1,12 +1,21 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { TiUser } from "react-icons/ti";
 import toast, { Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
 import { userValidate } from "../helper/validate";
-import { loginUser } from "../helper/apiEndpoints";
+import { loginUser } from "../helper/UserApi";
 
 const Login = () => {
+  
+  const navigate = useNavigate();
+  
+  const successFunc = () => {
+    setTimeout(() => {
+      navigate("/");
+    }, 1500);
+    return <b>Logged in Succesfully!</b>
+  };
 
   const formik = useFormik({
     initialValues  : {
@@ -21,7 +30,7 @@ const Login = () => {
       let loginPromise = loginUser(values);
       toast.promise(loginPromise, {
         loading: "logging in",
-        success: "logged in successfully",
+        success: successFunc,
         error:  "login unsuccessful"
       })
       loginPromise.then(res => {

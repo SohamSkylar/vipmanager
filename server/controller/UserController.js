@@ -273,6 +273,10 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const activeUser = async (req, res) => {
+  res.status(201).json({'msg':'active'})
+}
+
 module.exports = {
   getAllUser,
   getSpecificUser,
@@ -281,4 +285,5 @@ module.exports = {
   loginUser,
   updateUser,
   resetPassword,
+  activeUser
 };

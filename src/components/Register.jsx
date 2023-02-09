@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import { registerUserValidate } from "../helper/validate";
 import { useState } from "react";
 import convertToBase64 from "../helper/convertToBase64.jsx";
-import { registerUser } from "../helper/apiEndpoints";
+import { registerUser } from "../helper/UserApi";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
@@ -149,7 +149,7 @@ const Register = () => {
             <div className="text-center py-4">
               <span className="text-gray-500">
                 Already a Member?
-                <a href="/" className="text-red-500 pl-1">
+                <a href="/login" className="text-red-500 pl-1">
                   Login
                 </a>
               </span>
