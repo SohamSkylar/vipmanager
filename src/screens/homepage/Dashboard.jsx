@@ -1,11 +1,32 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import { activeUser } from "../../helper/UserApi.jsx";
 import Navbar from "./components/Navbar.js";
 import Sidebar from "./components/Sidebar.js";
 const Dashboard = () => {
+
+  const [AuthTypeVal, setAuthTypeVal] = useState(false);
+  const [renderVal, setRenderVal] = useState();
+  useEffect(() => {
+    const activeUserPromise = activeUser();
+    activeUserPromise
+      .then((status) => {
+        if (status === 201) {
+          setAuthTypeVal(true);
+        }
+      })
+      .then(() => {
+        setRenderVal(true);
+      })
+      .catch((err) => {
+        setRenderVal(true);
+        console.log(err);
+      });
+  });
+
+
   return (
     <>
-      <Sidebar />
+      {renderVal && <Sidebar AuthTypeVal={AuthTypeVal}/>}
       <div className="relative md:ml-64 bg-blueGray-100">
         <Navbar />
         {/* Header */}

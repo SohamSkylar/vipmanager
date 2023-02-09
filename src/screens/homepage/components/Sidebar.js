@@ -1,10 +1,40 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import { GiHamburgerMenu } from 'react-icons/gi'
+import {ImCross} from 'react-icons/im'
 import NotificationDropdown from "./NotificationDropdown.js";
 import UserDropdown from "./UserDropdown.js";
 
-export default function Sidebar() {
+export default function Sidebar({ AuthTypeVal }) {
+  const deleteToken = () => {
+    localStorage.removeItem("token");
+  };
+
+  const AuthTypeFunc = () => {
+    if (AuthTypeVal) {
+      return (
+        <a
+          className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
+          href="/"
+          onClick={deleteToken}
+        >
+          <i className="fas fa-fingerprint text-blueGray-400 mr-2 text-sm"></i>{" "}
+          Logout
+        </a>
+      );
+    } else {
+      return (
+        <a
+          className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
+          href="/login"
+        >
+          <i className="fas fa-fingerprint text-blueGray-400 mr-2 text-sm"></i>{" "}
+          Login
+        </a>
+      );
+    }
+  };
+
   const [collapseShow, setCollapseShow] = React.useState("hidden");
   return (
     <>
@@ -16,14 +46,14 @@ export default function Sidebar() {
             type="button"
             onClick={() => setCollapseShow("bg-white m-2 py-3 px-6")}
           >
-            <i className="fas fa-bars"></i>
+            <GiHamburgerMenu />
           </button>
           {/* Brand */}
           <Link
             className="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
             to="/"
           >
-            Tailwind Starter Kit
+            INDINET GAMING
           </Link>
           {/* User */}
           <ul className="md:hidden items-center flex flex-wrap list-none">
@@ -58,13 +88,13 @@ export default function Sidebar() {
                     className="cursor-pointer text-black opacity-50 md:hidden px-3 py-1 text-xl leading-none bg-transparent rounded border border-solid border-transparent"
                     onClick={() => setCollapseShow("hidden")}
                   >
-                    <i className="fas fa-times"></i>
+                    <ImCross />
                   </button>
                 </div>
               </div>
             </div>
             {/* Form */}
-            <form className="mt-6 mb-4 md:hidden">
+            {/* <form className="mt-6 mb-4 md:hidden">
               <div className="mb-3 pt-0">
                 <input
                   type="text"
@@ -72,7 +102,7 @@ export default function Sidebar() {
                   className="border-0 px-3 py-2 h-12 border border-solid  border-blueGray-500 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-base leading-snug shadow-none outline-none focus:outline-none w-full font-normal"
                 />
               </div>
-            </form>
+            </form> */}
             {/* Navigation */}
             <ul className="md:flex-col md:min-w-full flex flex-col list-none">
               <li className="items-center">
@@ -80,7 +110,8 @@ export default function Sidebar() {
                   className="text-pink-500 hover:text-pink-600 text-xs uppercase py-3 font-bold block"
                   to="/dashboard"
                 >
-                  <i className="fas fa-tv opacity-75 mr-2 text-sm"></i> Dashboard
+                  <i className="fas fa-tv opacity-75 mr-2 text-sm"></i>{" "}
+                  Dashboard
                 </Link>
               </li>
 
@@ -89,7 +120,8 @@ export default function Sidebar() {
                   className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
                   to="/"
                 >
-                  <i className="fas fa-newspaper text-blueGray-400 mr-2 text-sm"></i> Landing Page
+                  <i className="fas fa-newspaper text-blueGray-400 mr-2 text-sm"></i>{" "}
+                  VIP Status
                 </Link>
               </li>
 
@@ -98,43 +130,27 @@ export default function Sidebar() {
                   className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
                   to="/"
                 >
-                  <i className="fas fa-user-circle text-blueGray-400 mr-2 text-sm"></i> Profile Page
+                  <i className="fas fa-user-circle text-blueGray-400 mr-2 text-sm"></i>{" "}
+                  Edit Profile
                 </Link>
               </li>
 
-              <li className="items-center">
-                <Link
-                  className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
-                  to="/"
-                >
-                  <i className="fas fa-fingerprint text-blueGray-400 mr-2 text-sm"></i> Login
-                </Link>
-              </li>
+              <li className="items-center">{AuthTypeFunc()}</li>
 
               <li className="items-center">
                 <a
                   className="text-blueGray-300 text-xs uppercase py-3 font-bold block"
                   href="#pablo"
-                  onClick={e => e.preventDefault()}
+                  onClick={(e) => e.preventDefault()}
                 >
-                  <i className="fas fa-clipboard-list text-blueGray-300 mr-2 text-sm"></i> Register (soon)
-                </a>
-              </li>
-
-              <li className="items-center">
-                <a
-                  className="text-blueGray-300 text-xs uppercase py-3 font-bold block"
-                  href="#pablo"
-                  onClick={e => e.preventDefault()}
-                >
-                  <i className="fas fa-tools text-blueGray-300 mr-2 text-sm"></i> Settings (soon)
+                  <i className="fas fa-tools text-blueGray-300 mr-2 text-sm"></i>{" "}
+                  Settings
                 </a>
               </li>
             </ul>
             {/* Divider */}
             <hr className="my-4 md:min-w-full" />
-            {/* Heading */}
-            
+            {/* Heading */} 
           </div>
         </div>
       </nav>
