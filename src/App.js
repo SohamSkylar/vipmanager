@@ -11,8 +11,16 @@ import Dashboard from './screens/homepage/Dashboard';
 
 const router = createBrowserRouter([
   {
+    path : '/admin',
+    element : <Login type = "adminlogin"/>
+  },
+  {
     path : '/login',
     element : <Login/>
+  },
+  {
+    path : '/newadmin',
+    element : <Register type = "adminRegister"/>
   },
   {
     path : '/register',

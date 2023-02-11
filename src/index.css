@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body{
+    --tw-text-opacity: 1;
+    background-color: rgb(30 41 59 / var(--tw-text-opacity));
+    /* background-image: url("https://res.cloudinary.com/dftwytjjq/image/upload/v1676052918/images/Gabe_newell__61d1d9_4539328_t090d4.jpg") ; */
+}
+
+.dashboardui{
+    background-image: url("https://res.cloudinary.com/dftwytjjq/image/upload/v1676052918/images/Gabe_newell__61d1d9_4539328_t090d4.jpg") ;
+    background-size: cover;
+    background-repeat: no-repeat;
+}

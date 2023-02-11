@@ -4,9 +4,9 @@ import { TiUser } from "react-icons/ti";
 import toast, { Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
 import { userValidate } from "../helper/validate";
-import { loginUser } from "../helper/UserApi";
+import { loginAdmin, loginUser } from "../helper/UserApi";
 
-const Login = () => {
+const Login = (props) => {
   
   const navigate = useNavigate();
   
@@ -26,8 +26,13 @@ const Login = () => {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async values => {
+      
       // console.log(values)
-      let loginPromise = loginUser(values);
+      if(props.type === 'adminlogin'){
+        var loginPromise = loginAdmin(values)
+      } else {
+        var loginPromise = loginUser(values);
+      }
       toast.promise(loginPromise, {
         loading: "logging in",
         success: successFunc,

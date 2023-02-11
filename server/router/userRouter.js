@@ -4,6 +4,7 @@ const {
   verifyUser,
   auth,
   checkDuplicateUser,
+  checkDuplicateAdmin,
 } = require("../middleware/auth.js");
 
 const {
@@ -15,6 +16,8 @@ const {
   updateUser,
   resetPassword,
   activeUser,
+  loginAdmin,
+  addAdmin,
 } = require("../controller/UserController");
 const { generateOTP, verifyOTP } = require("../controller/OTPController.js");
 
@@ -34,7 +37,9 @@ userRouter.put("/resetPassword", verifyUser, resetPassword);
 
 //Post method
 userRouter.route("/login").post(loginUser);
+userRouter.post("/adminlogger", loginAdmin);
 userRouter.post("/register", checkDuplicateUser, registerUser);
+userRouter.post("/addadmin", checkDuplicateAdmin, addAdmin);
 
 //delete method
 

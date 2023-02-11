@@ -3,12 +3,14 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const ENV = require("../config.js");
 
+const tableName = "customer";
+
 const getAllUser = async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
     console.log("db connected");
-    const sqlQuery = `SELECT * FROM user`;
+    const sqlQuery = `SELECT * FROM ${tableName}`;
     let result = await pool.query(sqlQuery);
     res.json(result);
 
@@ -27,7 +29,7 @@ const getSpecificUser = async (req, res) => {
   try {
     conn = await pool.getConnection();
     console.log("db is active");
-    const sqlQuery = `SELECT * FROM user WHERE username=?`;
+    const sqlQuery = `SELECT * FROM ${tableName} WHERE username=?`;
     let result = await pool.query(sqlQuery, req.params.username);
     if (result.length === 0) {
       res.send("No user found...");
@@ -48,7 +50,7 @@ const addUser = async (req, res) => {
     console.log("db is active");
     let name = req.body.name;
     let email = req.body.email;
-    const sqlQuery = `INSERT INTO test (name, email) VALUES (?,?)`;
+    const sqlQuery = `INSERT INTO ${tableName} (name, email) VALUES (?,?)`;
     const result = await pool.query(sqlQuery, [name, email]);
     console.log(result);
     res.json({ userid: Number(result.insertId.toString()) });
@@ -58,8 +60,6 @@ const addUser = async (req, res) => {
     if (conn) return conn.release();
   }
 };
-
-// const registerUser = async (req, res) => {
 //   let conn;
 //   try {
 //     conn = await pool.getConnection();
@@ -140,7 +140,7 @@ const registerUser = async (req, res) => {
       bcrypt
         .hash(password, 10)
         .then(async (hashedPassword) => {
-          const sqlQuery = `INSERT INTO user (name, email, username, password) VALUES(?,?,?,?)`;
+          const sqlQuery = `INSERT INTO ${tableName} (name, email, username, password) VALUES(?,?,?,?)`;
           const result = await pool.query(sqlQuery, [
             name,
             email,
@@ -152,7 +152,44 @@ const registerUser = async (req, res) => {
         })
         .catch((error) => {
           return res.status(500).send({
-            error: "unable to hash password",
+            error: error.message,
+          });
+        });
+    }
+  } catch (err) {
+    res.send(err.message);
+  } finally {
+    if (conn) return conn.release();
+  }
+};
+
+const addAdmin = async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    console.log("register user api activated");
+    let name = req.body.name;
+    let email = req.body.email;
+    let username = req.body.username;
+    let password = req.body.password;
+
+    if (password) {
+      bcrypt
+        .hash(password, 10)
+        .then(async (hashedPassword) => {
+          const sqlQuery = `INSERT INTO admin (name, email, username, password) VALUES(?,?,?,?)`;
+          const result = await pool.query(sqlQuery, [
+            name,
+            email,
+            username,
+            hashedPassword,
+          ]);
+          console.log(result);
+          res.json({ userid: Number(result.insertId.toString()) });
+        })
+        .catch((error) => {
+          return res.status(500).send({
+            error: error.message,
           });
         });
     }
@@ -172,7 +209,55 @@ const loginUser = async (req, res) => {
     conn = await pool.getConnection();
     console.log("login api is active");
     const checkUser = new Promise(async (resolve, reject) => {
-      const sqlQuery = `SELECT * FROM user WHERE username=?`;
+      const sqlQuery = `SELECT * FROM ${tableName} WHERE username=?`;
+      result = await pool.query(sqlQuery, username);
+      //res.send('ok')
+      if (result.length === 0) reject(new Error("INVALID_USERNAME"));
+      else if (result.length > 1) reject(new Error("DUPLICATE_USERNAME"));
+      else resolve();
+    });
+
+    Promise.all([checkUser])
+      .then(async () => {
+        const querypass = result[0].password;
+        await bcrypt.compare(password, querypass).then((passwordCheck) => {
+          if (!passwordCheck)
+            return res.status(400).send({ error: "Wrong Password!!" });
+          const token = jwt.sign(
+            {
+              userid: result[0].id,
+              username: result[0].username,
+            },
+            ENV.JWT_SECRET,
+            { expiresIn: "24h" }
+          );
+          return res.status(200).send({
+            msg: "Login Successful...",
+            username: result[0].username,
+            token,
+          });
+        });
+      })
+      .catch((err) => {
+        res.status(400).send(err.message);
+      });
+  } catch (err) {
+    res.send(err.message);
+  } finally {
+    if (conn) return conn.release();
+  }
+};
+
+const loginAdmin = async (req, res) => {
+  let conn;
+  try {
+    let username = req.body.username;
+    let password = req.body.password;
+    let result;
+    conn = await pool.getConnection();
+    console.log("login api is active");
+    const checkUser = new Promise(async (resolve, reject) => {
+      const sqlQuery = `SELECT * FROM admin WHERE username=?`;
       result = await pool.query(sqlQuery, username);
       //res.send('ok')
       if (result.length === 0) reject(new Error("INVALID_USERNAME"));
@@ -218,7 +303,7 @@ const updateUser = async (req, res) => {
     conn = await pool.getConnection();
     console.log("update api activated");
     if (userid) {
-      const checksqlQuery = `SELECT * FROM user WHERE id=?`;
+      const checksqlQuery = `SELECT * FROM ${tableName} WHERE id=?`;
       let checkresult = await pool.query(checksqlQuery, userid);
       if (checkresult.length === 0) {
         throw new Error("WRONG_ID");
@@ -229,7 +314,7 @@ const updateUser = async (req, res) => {
       if (!name || !email || !username) {
         throw new Error("ENTER_ALL_FIELDS");
       }
-      const sqlQuery = `UPDATE user SET name='${name}',email='${email}',username='${username}' WHERE id=?`;
+      const sqlQuery = `UPDATE ${tableName} SET name='${name}',email='${email}',username='${username}' WHERE id=?`;
       const result = await pool.query(sqlQuery, userid);
       console.log(result);
       if (Number(result.insertId.toString()) >= 0) res.json({ msg: "success" });
@@ -256,7 +341,7 @@ const resetPassword = async (req, res) => {
       bcrypt
         .hash(password, 10)
         .then(async (hashedPassword) => {
-          const sqlQuery = `UPDATE user SET password=? WHERE username=?`;
+          const sqlQuery = `UPDATE ${tableName} SET password=? WHERE username=?`;
           const result = await pool.query(sqlQuery, [hashedPassword, username]);
           if (Number(result.insertId.toString()) >= 0)
             res.json({ msg: "success" });
@@ -274,8 +359,8 @@ const resetPassword = async (req, res) => {
 };
 
 const activeUser = async (req, res) => {
-  res.status(201).json({'msg':'active'})
-}
+  res.status(201).json({ msg: "active" });
+};
 
 module.exports = {
   getAllUser,
@@ -285,5 +370,7 @@ module.exports = {
   loginUser,
   updateUser,
   resetPassword,
-  activeUser
+  activeUser,
+  loginAdmin,
+  addAdmin
 };

@@ -5,10 +5,10 @@ import { useFormik } from "formik";
 import { registerUserValidate } from "../helper/validate";
 import { useState } from "react";
 import convertToBase64 from "../helper/convertToBase64.jsx";
-import { registerUser } from "../helper/UserApi";
+import { registerAdmin, registerUser } from "../helper/UserApi";
 import { useNavigate } from "react-router-dom";
 
-const Register = () => {
+const Register = (props) => {
   const [file, setFile] = useState("");
   const [imgReady, setImgReady] = useState(false);
   const navigate = useNavigate();
@@ -32,7 +32,10 @@ const Register = () => {
       let toastBox = toast.loading("Loading...");
 
       values = await Object.assign(values, { profilePic: file || "" });
-      let registerPromise = registerUser(values);
+
+      if(props.type === "adminRegister") var registerPromise = registerAdmin(values)
+      else var registerPromise = registerUser(values);
+
       registerPromise
         .then(
           (resolve) => {

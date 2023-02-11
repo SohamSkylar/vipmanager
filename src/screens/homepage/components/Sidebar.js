@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { GiHamburgerMenu } from 'react-icons/gi'
-import {ImCross} from 'react-icons/im'
+import { GiHamburgerMenu } from "react-icons/gi";
+import { ImCross } from "react-icons/im";
 import NotificationDropdown from "./NotificationDropdown.js";
 import UserDropdown from "./UserDropdown.js";
 
@@ -14,7 +14,7 @@ export default function Sidebar({ AuthTypeVal }) {
     if (AuthTypeVal) {
       return (
         <a
-          className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
+          className="text-white hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
           href="/"
           onClick={deleteToken}
         >
@@ -25,7 +25,7 @@ export default function Sidebar({ AuthTypeVal }) {
     } else {
       return (
         <a
-          className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
+          className="text-white hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
           href="/login"
         >
           <i className="fas fa-fingerprint text-blueGray-400 mr-2 text-sm"></i>{" "}
@@ -38,7 +38,7 @@ export default function Sidebar({ AuthTypeVal }) {
   const [collapseShow, setCollapseShow] = React.useState("hidden");
   return (
     <>
-      <nav className="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-nowrap md:overflow-hidden shadow-xl bg-white flex flex-wrap items-center justify-between relative md:w-64 z-10 py-4 px-6">
+      <nav className="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-nowrap md:overflow-hidden shadow-xl bg-slate-900 flex flex-wrap items-center justify-between relative md:w-64 z-10 py-4 px-6">
         <div className="md:flex-col md:items-stretch md:min-h-full md:flex-nowrap px-0 flex flex-wrap items-center justify-between w-full mx-auto">
           {/* Toggler */}
           <button
@@ -50,7 +50,7 @@ export default function Sidebar({ AuthTypeVal }) {
           </button>
           {/* Brand */}
           <Link
-            className="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
+            className="md:block text-left md:pb-2 text-amber-500 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
             to="/"
           >
             INDINET GAMING
@@ -115,31 +115,35 @@ export default function Sidebar({ AuthTypeVal }) {
                 </Link>
               </li>
 
-              <li className="items-center">
-                <Link
-                  className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
-                  to="/"
-                >
-                  <i className="fas fa-newspaper text-blueGray-400 mr-2 text-sm"></i>{" "}
-                  VIP Status
-                </Link>
-              </li>
+              {AuthTypeVal ? (
+                <li className="items-center">
+                  <Link
+                    className="text-white hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
+                    to="/"
+                  >
+                    <i className="fas fa-newspaper text-blueGray-400 mr-2 text-sm"></i>{" "}
+                    VIP Status
+                  </Link>
+                </li>
+              ) : null}
 
-              <li className="items-center">
-                <Link
-                  className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
-                  to="/"
-                >
-                  <i className="fas fa-user-circle text-blueGray-400 mr-2 text-sm"></i>{" "}
-                  Edit Profile
-                </Link>
-              </li>
+              {AuthTypeVal ? (
+                <li className="items-center">
+                  <Link
+                    className="text-white hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
+                    to="/profile"
+                  >
+                    <i className="fas fa-user-circle text-blueGray-400 mr-2 text-sm"></i>{" "}
+                    Edit Profile
+                  </Link>
+                </li>
+              ) : null}
 
               <li className="items-center">{AuthTypeFunc()}</li>
 
               <li className="items-center">
                 <a
-                  className="text-blueGray-300 text-xs uppercase py-3 font-bold block"
+                  className="text-white text-xs uppercase py-3 font-bold block"
                   href="#pablo"
                   onClick={(e) => e.preventDefault()}
                 >
@@ -150,7 +154,7 @@ export default function Sidebar({ AuthTypeVal }) {
             </ul>
             {/* Divider */}
             <hr className="my-4 md:min-w-full" />
-            {/* Heading */} 
+            {/* Heading */}
           </div>
         </div>
       </nav>

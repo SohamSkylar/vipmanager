@@ -20,12 +20,43 @@ export async function registerUser(userdetails) {
   }
 }
 
+export async function registerAdmin(admindetails) {
+  try {
+    const {
+      data: { msg },
+      status,
+    } = await axios.post(`${BASE_URL}/addadmin`, admindetails);
+
+    // let { username, email } = userdetails;
+    console.log(msg);
+    if (status === 409 || status === 410 || status === 411) {
+      return Promise.reject(status);
+    }
+    return Promise.resolve(msg);
+  } catch (error) {
+    return Promise.reject(error.message);
+  }
+}
+
 export async function loginUser(userdetails) {
   try {
     const {
       data: { msg, token },
       status,
     } = await axios.post(`${BASE_URL}/login`, userdetails);
+    if (status === 200) return Promise.resolve(token);
+    else return Promise.reject();
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+export async function loginAdmin(admindetails) {
+  try {
+    const {
+      data: { msg, token },
+      status,
+    } = await axios.post(`${BASE_URL}/adminlogger`, admindetails);
     if (status === 200) return Promise.resolve(token);
     else return Promise.reject();
   } catch (error) {
