@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { activeUser } from "../../helper/UserApi.jsx";
 import Navbar from "./components/Navbar.js";
 import ServerCard from "./components/ServerCard.jsx";
+import ServerDataGrid from "./components/ServerDataGrid.jsx";
 import Sidebar from "./components/Sidebar.js";
 const Dashboard = () => {
 
@@ -37,6 +38,12 @@ const Dashboard = () => {
               {/* Card stats */}
               <div className="flex flex-wrap">
                 <ServerCard name="Public Casual" price='79' duration='30' />
+              </div>
+            </div>
+            <div>
+              {/* Card stats */}
+              <div >
+                <ServerDataGrid/>
               </div>
             </div>
           </div>
