@@ -59,7 +59,7 @@ const ServerDataGrid = () => {
                     <div className="flex-wrap bg-stone-300 justify-center flow-root px-2">
                         <p className="text-base font-semibold text-blue-900 float-left py-2"> Start Date: 12.7.12 </p>
                         <p className="ml-2 mr-2 text-xl"></p>
-                        <p className="text-base font-semibold text-red-500 float-right py-2">End Date: 15.8.12</p><br/>
+                        <p className="text-base font-semibold text-red-700 float-right py-2">End Date: 15.8.12</p><br/>
                         <p className="text-base font-semibold text-slate-900 py-4">Days Left: 42</p>
                         <div className="float-right ml-auto mb-4">
                         <button className="rounded-lg bg-slate-900 px-5 py-2 text-sm text-green-500 font-medium">RENEW</button>
