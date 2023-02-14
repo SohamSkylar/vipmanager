@@ -7,50 +7,56 @@ import { BsEmojiSunglassesFill } from 'react-icons/bs'
 
 const ServerDataGrid = () => {
 
-    const [userData, setData] = useState();
+    //let username
 
-    const getUserData = async () => {
-        await axios.get("http://localhost:8001/api/user")
-            .then((res) => {
-                setData(res.data)
-            })
+    // const [userData, setData] = useState();
+
+    const getUserData =  async() =>{
+            const userData =
+            await axios.get("http://localhost:8001/api/user")
+                console.log(userData.data[0].username)
     }
 
-    useEffect(() => {
-        getUserData();
-    }, [])
+    useEffect(()=>{
+        getUserData()
+    })
+    
+    
+    
+    //console.log()
 
-
-
-
-
-
-    console.log(userData)
+    // const users = userData?.map(item=>{
+    //     username = item.username
+    //     console.log(username)
+    // })
+    //console.log(users)
+    
+    
     return (
-        <div class="p-4">
+        <div className="p-4">
 
-            <div class=" w-full lg:w-6/12 xl:w-4/12 bg-slate-900">
-                {/* <div class="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden" title="Mountain">
+            <div className=" w-full lg:w-6/12 xl:w-4/12 bg-slate-900">
+                {/* <div classNameName="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden" title="Mountain">
                 </div> */}
-                <div class="bg-slate-900 flex flex-col justify-between leading-normal shadow-lg">
+                <div className="bg-slate-900 flex flex-col justify-between leading-normal shadow-lg">
 
-                    <div class="flex-wrap w-full p-1 flow-root mt-1 px-2">
-                        <p class="text-sm text-amber-600 flex items-center float-left mt-3 px-1">
-                            <svg class="fill-current text-gray-500 w-3 h-3 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <div className="flex-wrap w-full p-1 flow-root mt-1 px-2">
+                        <p className="text-sm text-amber-600 flex items-center float-left mt-3 px-1">
+                            <svg className="fill-current text-gray-500 w-3 h-3 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                 <path d="M4 8V6a6 6 0 1 1 12 0v2h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-8c0-1.1.9-2 2-2h1zm5 6.73V17h2v-2.27a2 2 0 1 0-2 0zM7 6v2h6V6a3 3 0 0 0-6 0z" />
                             </svg>
                             Skylar's VIP status
                         </p>
 
-                        <div class="text-sm flow-root mr-0 px-2">
+                        <div className="text-sm flow-root mr-0 px-2">
                             <div className="text-white p-3 text-center inline-flex float-right items-center justify-end w-12 h-12 shadow-lg rounded-full bg-red-500">
                                 <BsEmojiSunglassesFill className="w-auto h-full" />
                             </div>
                         </div>
 
-                        <div class="px-2">
-                        <div class="font-bold text-xl mb-2 text-amber-500">Server Name: Public Casual</div>
-                        <div class="text-amber-600 text-base">Role: VIP </div>
+                        <div className="px-2">
+                        <div className="font-bold text-xl mb-2 text-amber-500">Server Name: </div>
+                        <div className="text-amber-600 text-base">Role: VIP </div>
                     </div>
                     </div>
 
