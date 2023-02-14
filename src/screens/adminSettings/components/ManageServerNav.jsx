@@ -19,7 +19,7 @@ const ManageServerNav = () => {
         </div>
       </div>
       <div className="relative w-full InnerNavSectionui mx-auto justify-center">
-        <div className="w-full xl:max-w-full manageServersui md:overflow-hidden overflow-scroll px-6 pt-4">
+        <div className="w-full xl:max-w-full manageServersui lg:overflow-hidden overflow-scroll px-6 py-4">
           <ManageServers />
         </div>
       </div>

@@ -3,11 +3,12 @@ import { activeUser } from "../../helper/UserApi.jsx";
 import Navbar from "./components/Navbar.js";
 import ServerCard from "./components/ServerCard.jsx";
 import Sidebar from "../../components/Sidebar.js";
+import { showAllServers } from "../../helper/ServerApi.jsx";
 const Dashboard = () => {
-
   const [AuthTypeVal, setAuthTypeVal] = useState(false);
   const [isAdmin, setIsAdminVal] = useState(false);
   const [renderVal, setRenderVal] = useState();
+  const [renderVal2, setRenderVal2] = useState();
 
   const activeUserFunc = () => {
     const activeUserPromise = activeUser();
@@ -15,8 +16,8 @@ const Dashboard = () => {
       .then((type) => {
         if (type === "admin") {
           setAuthTypeVal(true);
-          setIsAdminVal(true)
-        } else if(type === "customer"){
+          setIsAdminVal(true);
+        } else if (type === "customer") {
           setAuthTypeVal(true);
         }
       })
@@ -27,18 +28,60 @@ const Dashboard = () => {
         setRenderVal(true);
         console.log(err);
       });
+  };
+
+  // const showServersFunc = () => {
+  //   const showServerPromise = showAllServers();
+  //   // let serverData;
+  //   showServerPromise
+  //     .then((data) => {
+  //       console.log(data)
+  //       return <ServerCard name="{index.name}" price="79" duration="30" />
+  //       // serverData = data;
+  //       setRenderVal2(true);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  //   // if(renderVal2) {
+  //   //   // serverData.map((index) => {
+  //   //   //   return <ServerCard name={index.name} price="79" duration="30" />
+  //   //   // })
+  //   //   console.log(serverData)
+  //   // }
+  //   Promise.all([showServerPromise]).then(() => {
+  //     console.log("executed")
+  //     ;
+  //   }).then(() => {
+  //     setRenderVal2(true)
+  //   })
+  // };
+
+  const showServersFunc = () => {
+    const newPromise = showAllServers()
+    newPromise.then((data) => {
+      return <ServerCard name="name" price="79" duration="30" />
+    }).catch(err => console.log(err.message))
   }
 
+  const randomPrint = () => {
+    return <ServerCard name="name" price="79" duration="30" />;
+  };
 
+  //console.log(renderVal2 && showServersFunc())
+
+  // const showServerCard = dataServer.map(index => (
+  //       //<ServerCard name="{index.name}" price="79" duration="30" />
+  //       console.log(index.name)
+  //     ))
 
   useEffect(() => {
-    activeUserFunc()
+    activeUserFunc();
   });
-
 
   return (
     <>
-      {renderVal && <Sidebar AuthTypeVal={AuthTypeVal} UserTypeVal={isAdmin}/>}
+      {renderVal && <Sidebar AuthTypeVal={AuthTypeVal} UserTypeVal={isAdmin} />}
       <div className="relative md:ml-64 bg-blueGray-100">
         <Navbar />
         {/* Header */}
@@ -47,7 +90,10 @@ const Dashboard = () => {
             <div>
               {/* Card stats */}
               <div className="flex flex-wrap">
-                <ServerCard name="Public Casual" price='79' duration='30' />
+                {/* {renderVal2 && showServerCard} */}
+                {/* {showServersFunc()} */}
+                {/* {randomPrint()} */}
+                {showServersFunc()}
               </div>
             </div>
           </div>
@@ -61,6 +107,6 @@ const Dashboard = () => {
       </div>
     </>
   );
-}
+};
 
 export default Dashboard;
