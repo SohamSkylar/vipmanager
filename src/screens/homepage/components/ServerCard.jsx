@@ -3,7 +3,7 @@ import {BsEmojiSunglassesFill} from 'react-icons/bs'
 
 const ServerCard = ({ name, price, duration }) => {
   return (
-    <div className="w-full lg:w-6/12 xl:w-4/12 px-4">
+    <div className="w-full lg:w-6/12 xl:w-4/12 px-4 py-2">
       <div className="relative flex flex-col min-w-0 break-words bg-white rounded mb-6 xl:mb-0 shadow-lg">
         <div className="flex-auto">
           <div className="flex flex-wrap bg-slate-900">

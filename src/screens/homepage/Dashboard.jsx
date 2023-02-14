@@ -48,7 +48,7 @@ const Dashboard = () => {
   useEffect(() => {
     activeUserFunc();
     getServerDataFunc();
-  });
+  },[]);
 
   return (
     <>
@@ -60,7 +60,7 @@ const Dashboard = () => {
           <div className="px-4 md:px-10 mx-auto w-full">
             <div>
               {/* Card stats */}
-              <div className="flex flex-wrap">{displayServers}</div>
+              <div className="flex flex-wrap lg:overflow-hidden overflow-scroll serverCardui">{displayServers}</div>
             </div>
           </div>
         </div>
