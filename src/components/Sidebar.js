@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { ImCross } from "react-icons/im";
 import NotificationDropdown from "./NotificationDropdown.js";
@@ -34,6 +34,11 @@ export default function Sidebar({ AuthTypeVal, UserTypeVal }) {
       );
     }
   };
+
+  const activeClassName =
+    "text-amber-600 text-xs uppercase py-3 font-bold block";
+  const inActiveClassName =
+    "text-white hover:text-amber-500 text-xs uppercase py-3 font-bold block";
 
   const [collapseShow, setCollapseShow] = React.useState("hidden");
   return (
@@ -106,62 +111,73 @@ export default function Sidebar({ AuthTypeVal, UserTypeVal }) {
             {/* Navigation */}
             <ul className="md:flex-col md:min-w-full flex flex-col list-none">
               <li className="items-center">
-                <Link
-                  className="text-pink-500 hover:text-pink-600 text-xs uppercase py-3 font-bold block"
+                <NavLink
+                  className={({ isActive }) =>
+                    isActive ? activeClassName : inActiveClassName
+                  }
+                  // className={active? "text-amber-600 text-xs uppercase py-3 font-bold block": "text-white hover:text-amber-500 text-xs uppercase py-3 font-bold block"}
                   to="/"
                 >
                   <i className="fas fa-tv opacity-75 mr-2 text-sm"></i>{" "}
                   Dashboard
-                </Link>
+                </NavLink>
               </li>
 
               {AuthTypeVal ? (
                 <li className="items-center">
-                  <Link
-                    className="text-white hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive ? activeClassName : inActiveClassName
+                    }
+                    // className={active? "text-amber-600 text-xs uppercase py-3 font-bold block": "text-white hover:text-amber-500 text-xs uppercase py-3 font-bold block"}
                     to="/status"
                   >
                     <i className="fas fa-newspaper text-blueGray-400 mr-2 text-sm"></i>{" "}
                     Subcription Status
-                  </Link>
+                  </NavLink>
                 </li>
               ) : null}
 
               {AuthTypeVal ? (
                 <li className="items-center">
-                  <Link
-                    className="text-white hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
+                  <NavLink
+                    className={({ isActive }) =>
+                    isActive ? activeClassName : inActiveClassName
+                  }
                     to="/profile"
                   >
                     <i className="fas fa-user-circle text-blueGray-400 mr-2 text-sm"></i>{" "}
                     Edit Profile
-                  </Link>
+                  </NavLink>
                 </li>
               ) : null}
 
               <li className="items-center">{AuthTypeFunc()}</li>
-              
+
               {UserTypeVal ? (
                 <li className="items-center">
-                  <Link
-                    className="text-white hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
+                  <NavLink
+                    className={({ isActive }) =>
+                    isActive ? activeClassName : inActiveClassName
+                  }
                     to="/adminsettings"
                   >
                     <i className="fas fa-user-circle text-blueGray-400 mr-2 text-sm"></i>{" "}
                     Admin Settings
-                  </Link>
+                  </NavLink>
                 </li>
               ) : null}
 
               <li className="items-center">
-                <a
-                  className="text-white text-xs uppercase py-3 font-bold block"
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
+                <NavLink
+                  className={({ isActive }) =>
+                  isActive ? activeClassName : inActiveClassName
+                }
+                  to="/settings"
                 >
                   <i className="fas fa-tools text-blueGray-300 mr-2 text-sm"></i>{" "}
                   Settings
-                </a>
+                </NavLink>
               </li>
             </ul>
             {/* Divider */}
