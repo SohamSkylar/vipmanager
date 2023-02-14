@@ -36,8 +36,8 @@ userRouter.put("/update", auth, updateUser);
 userRouter.put("/resetPassword", verifyUser, resetPassword);
 
 //Post method
-userRouter.route("/login").post(loginUser);
 userRouter.post("/adminlogger", loginAdmin);
+userRouter.post("/login", loginUser);
 userRouter.post("/register", checkDuplicateUser, registerUser);
 userRouter.post("/addadmin", checkDuplicateAdmin, addAdmin);
 

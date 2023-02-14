@@ -79,10 +79,11 @@ export async function updateUser(response) {
 export async function activeUser() {
   try {
     const userToken = await localStorage.getItem("token");
-    const { status } = await axios.get(`${BASE_URL}/auth`, {
+    const { data: {type}, status } = await axios.get(`${BASE_URL}/auth`, {
       headers: { Authorization: `Bearer ${userToken}` },
     });
-    return Promise.resolve(status);
+      return Promise.resolve(type);
+    
   } catch (err) {
     return Promise.reject({ error: "Auth Failed" });
   }

@@ -227,6 +227,7 @@ const loginUser = async (req, res) => {
             {
               userid: result[0].id,
               username: result[0].username,
+              usertype: "customer"
             },
             ENV.JWT_SECRET,
             { expiresIn: "24h" }
@@ -275,6 +276,7 @@ const loginAdmin = async (req, res) => {
             {
               userid: result[0].id,
               username: result[0].username,
+              usertype: "admin"
             },
             ENV.JWT_SECRET,
             { expiresIn: "24h" }
@@ -359,7 +361,11 @@ const resetPassword = async (req, res) => {
 };
 
 const activeUser = async (req, res) => {
-  res.status(201).json({ msg: "active" });
+  const userType = req.type;
+  if(userType === "admin"){
+    res.status(201).json({ msg: "active", type: "admin" });
+  } else
+  res.status(201).json({ msg: "active", type: "customer" });
 };
 
 module.exports = {

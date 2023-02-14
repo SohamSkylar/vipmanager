@@ -5,7 +5,7 @@ import { ImCross } from "react-icons/im";
 import NotificationDropdown from "./NotificationDropdown.js";
 import UserDropdown from "./UserDropdown.js";
 
-export default function Sidebar({ AuthTypeVal }) {
+export default function Sidebar({ AuthTypeVal, UserTypeVal }) {
   const deleteToken = () => {
     localStorage.removeItem("token");
   };
@@ -108,7 +108,7 @@ export default function Sidebar({ AuthTypeVal }) {
               <li className="items-center">
                 <Link
                   className="text-pink-500 hover:text-pink-600 text-xs uppercase py-3 font-bold block"
-                  to="/dashboard"
+                  to="/"
                 >
                   <i className="fas fa-tv opacity-75 mr-2 text-sm"></i>{" "}
                   Dashboard
@@ -119,10 +119,10 @@ export default function Sidebar({ AuthTypeVal }) {
                 <li className="items-center">
                   <Link
                     className="text-white hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
-                    to="/"
+                    to="/status"
                   >
                     <i className="fas fa-newspaper text-blueGray-400 mr-2 text-sm"></i>{" "}
-                    VIP Status
+                    Subcription Status
                   </Link>
                 </li>
               ) : null}
@@ -140,6 +140,18 @@ export default function Sidebar({ AuthTypeVal }) {
               ) : null}
 
               <li className="items-center">{AuthTypeFunc()}</li>
+              
+              {UserTypeVal ? (
+                <li className="items-center">
+                  <Link
+                    className="text-white hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
+                    to="/adminsettings"
+                  >
+                    <i className="fas fa-user-circle text-blueGray-400 mr-2 text-sm"></i>{" "}
+                    Admin Settings
+                  </Link>
+                </li>
+              ) : null}
 
               <li className="items-center">
                 <a

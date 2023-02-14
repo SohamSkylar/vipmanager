@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { activeUser } from "../../helper/UserApi.jsx";
 import Navbar from "./components/Navbar.js";
-import ServerCard from "./components/ServerCard.jsx";
 import Sidebar from "../../components/Sidebar.js";
-const Dashboard = () => {
-
+import ServerDataGrid from "./components/ServerDataGrid.jsx";
+const SubscriptionStatus = () => {
   const [AuthTypeVal, setAuthTypeVal] = useState(false);
   const [isAdmin, setIsAdminVal] = useState(false);
   const [renderVal, setRenderVal] = useState();
@@ -15,8 +14,8 @@ const Dashboard = () => {
       .then((type) => {
         if (type === "admin") {
           setAuthTypeVal(true);
-          setIsAdminVal(true)
-        } else if(type === "customer"){
+          setIsAdminVal(true);
+        } else if (type === "customer") {
           setAuthTypeVal(true);
         }
       })
@@ -27,18 +26,15 @@ const Dashboard = () => {
         setRenderVal(true);
         console.log(err);
       });
-  }
-
-
+  };
 
   useEffect(() => {
-    activeUserFunc()
+    activeUserFunc();
   });
-
 
   return (
     <>
-      {renderVal && <Sidebar AuthTypeVal={AuthTypeVal} UserTypeVal={isAdmin}/>}
+      {renderVal && <Sidebar AuthTypeVal={AuthTypeVal} UserTypeVal={isAdmin} />}
       <div className="relative md:ml-64 bg-blueGray-100">
         <Navbar />
         {/* Header */}
@@ -46,8 +42,8 @@ const Dashboard = () => {
           <div className="px-4 md:px-10 mx-auto w-full">
             <div>
               {/* Card stats */}
-              <div className="flex flex-wrap">
-                <ServerCard name="Public Casual" price='79' duration='30' />
+              <div>
+                <ServerDataGrid />
               </div>
             </div>
           </div>
@@ -61,6 +57,6 @@ const Dashboard = () => {
       </div>
     </>
   );
-}
+};
 
-export default Dashboard;
+export default SubscriptionStatus;

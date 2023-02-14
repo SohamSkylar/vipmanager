@@ -11,6 +11,7 @@ const auth = async (req, res, next) => {
     const token = req.headers.authorization.split(" ")[1];
     const decodedToken = await jwt.verify(token, ENV.JWT_SECRET);
     req.user = decodedToken;
+    req.type = decodedToken.usertype;
     next();
   } catch (error) {
     res.status(202).send("Please login");

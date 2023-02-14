@@ -8,6 +8,8 @@ import Reset from './components/Reset.jsx'
 import Register from './components/Register.jsx'
 import PageNotFound from './components/PageNotFound.jsx'
 import Dashboard from './screens/homepage/Dashboard';
+import AdminSettings from './screens/adminSettings/AdminSettings';
+import SubscriptionStatus from './screens/subsciptionStatus/SubscriptionStatus';
 
 const router = createBrowserRouter([
   {
@@ -41,6 +43,14 @@ const router = createBrowserRouter([
   {
     path : '/profile',
     element : <Profile/>
+  },
+  {
+    path : '/adminsettings',
+    element : <AdminSettings/>
+  },
+  {
+    path : '/status',
+    element : <SubscriptionStatus/>
   },
   {
     path : '/',

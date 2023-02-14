@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { activeUser } from "../../helper/UserApi.jsx";
 import Navbar from "./components/Navbar.js";
-import ServerCard from "./components/ServerCard.jsx";
 import Sidebar from "../../components/Sidebar.js";
-const Dashboard = () => {
+import TabNavigation from "./components/TabNavigation.jsx";
+const AdminSettings = () => {
 
   const [AuthTypeVal, setAuthTypeVal] = useState(false);
   const [isAdmin, setIsAdminVal] = useState(false);
@@ -43,12 +43,10 @@ const Dashboard = () => {
         <Navbar />
         {/* Header */}
         <div className="relative md:pt-32 pb-32 pt-12 dashboardui">
-          <div className="px-4 md:px-10 mx-auto w-full">
+          <div className="px-4 md:px-10 mx-auto w-full adminbody">
             <div>
               {/* Card stats */}
-              <div className="flex flex-wrap">
-                <ServerCard name="Public Casual" price='79' duration='30' />
-              </div>
+              <TabNavigation/>
             </div>
           </div>
         </div>
@@ -63,4 +61,4 @@ const Dashboard = () => {
   );
 }
 
-export default Dashboard;
+export default AdminSettings;

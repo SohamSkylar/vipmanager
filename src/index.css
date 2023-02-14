@@ -9,7 +9,20 @@ body{
 }
 
 .dashboardui{
-    background-image: url("https://res.cloudinary.com/dftwytjjq/image/upload/v1676052918/images/Gabe_newell__61d1d9_4539328_t090d4.jpg") ;
+    background-color: rgb(128, 121, 117);
     background-size: cover;
     background-repeat: no-repeat;
+    height: 100vh
+}
+
+.ManageServerTabui{
+    height: calc(100vh - 240px)
+}
+
+.InnerNavSectionui{
+    height: calc(100vh - 350px)
+}
+
+.manageServersui{
+    max-height: calc(100vh - 320px)
 }
