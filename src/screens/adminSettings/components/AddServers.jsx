@@ -2,7 +2,7 @@ import { useFormik } from "formik";
 import React from "react";
 import  toast, { Toaster } from "react-hot-toast";
 import { addNewServer } from "../../../helper/ServerApi";
-const ManageServers = () => {
+const AddServers = () => {
 
   const formik = useFormik({
     initialValues: {
@@ -114,4 +114,4 @@ const ManageServers = () => {
   );
 };
 
-export default ManageServers;
+export default AddServers;

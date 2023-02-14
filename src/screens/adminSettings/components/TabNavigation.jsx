@@ -1,10 +1,8 @@
 import React from "react";
 import { useState } from "react";
 import ManageServerNav from "./ManageServerNav";
-import ManageServers from "./ManageServers";
 
 const TabNavigation = () => {
-  const [activeTab, setActiveTab] = useState(0);
 
   return (
     <div>
