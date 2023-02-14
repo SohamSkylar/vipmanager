@@ -8,7 +8,7 @@ const Dashboard = () => {
   const [AuthTypeVal, setAuthTypeVal] = useState(false);
   const [isAdmin, setIsAdminVal] = useState(false);
   const [renderVal, setRenderVal] = useState();
-  const [renderVal2, setRenderVal2] = useState();
+  const [serverData, setServerData] = useState([]);
 
   const activeUserFunc = () => {
     const activeUserPromise = activeUser();
@@ -30,53 +30,24 @@ const Dashboard = () => {
       });
   };
 
-  // const showServersFunc = () => {
-  //   const showServerPromise = showAllServers();
-  //   // let serverData;
-  //   showServerPromise
-  //     .then((data) => {
-  //       console.log(data)
-  //       return <ServerCard name="{index.name}" price="79" duration="30" />
-  //       // serverData = data;
-  //       setRenderVal2(true);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  //   // if(renderVal2) {
-  //   //   // serverData.map((index) => {
-  //   //   //   return <ServerCard name={index.name} price="79" duration="30" />
-  //   //   // })
-  //   //   console.log(serverData)
-  //   // }
-  //   Promise.all([showServerPromise]).then(() => {
-  //     console.log("executed")
-  //     ;
-  //   }).then(() => {
-  //     setRenderVal2(true)
-  //   })
-  // };
-
-  const showServersFunc = () => {
-    const newPromise = showAllServers()
-    newPromise.then((data) => {
-      return <ServerCard name="name" price="79" duration="30" />
-    }).catch(err => console.log(err.message))
-  }
-
-  const randomPrint = () => {
-    return <ServerCard name="name" price="79" duration="30" />;
+  const getServerDataFunc = () => {
+    const newPromise = showAllServers();
+    newPromise
+      .then((data) => {
+        setServerData(data);
+      })
+      .catch((err) => console.log(err.message));
   };
 
-  //console.log(renderVal2 && showServersFunc())
-
-  // const showServerCard = dataServer.map(index => (
-  //       //<ServerCard name="{index.name}" price="79" duration="30" />
-  //       console.log(index.name)
-  //     ))
+  const displayServers = serverData.map((index) => {
+    return (
+      <ServerCard key={index.id} name={index.name} price="79" duration="30" />
+    );
+  });
 
   useEffect(() => {
     activeUserFunc();
+    getServerDataFunc();
   });
 
   return (
@@ -89,12 +60,7 @@ const Dashboard = () => {
           <div className="px-4 md:px-10 mx-auto w-full">
             <div>
               {/* Card stats */}
-              <div className="flex flex-wrap">
-                {/* {renderVal2 && showServerCard} */}
-                {/* {showServersFunc()} */}
-                {/* {randomPrint()} */}
-                {showServersFunc()}
-              </div>
+              <div className="flex flex-wrap">{displayServers}</div>
             </div>
           </div>
         </div>
