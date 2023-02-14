@@ -7,6 +7,7 @@ var fs = require("fs");
 const path = require("path");
 const pool = require("./database/conn");
 const serverRouter = require("./router/serverRouter");
+const subscriptionRouter = require("./router/subscriptionRouter");
 
 const PORT = process.env.PORT;
 
@@ -28,13 +29,14 @@ app.get("/", (req, res) => {
 //api routes
 app.use("/api", userRouter);
 app.use("/api/server", serverRouter)
+app.use("/api/subs", subscriptionRouter)
 
 app.listen(PORT, () => {
   console.log(`server running on http://localhost:${PORT}`);
 });
 
 const autoCreateTable = () => {
-  const tableFiles = ["userTable.sql", "serverTable.sql", "adminTable.sql"]
+  const tableFiles = ["userTable.sql", "serverTable.sql", "adminTable.sql", "subscriptionTable.sql", "serverSubTable.sql"]
   tableFiles.forEach(async tableName => {
     const generatedScript = fs
     .readFileSync(path.join(__dirname, `./models/${tableName}`))

@@ -3,7 +3,7 @@ import { activeUser } from "../../helper/UserApi.jsx";
 import Navbar from "./components/Navbar.js";
 import ServerCard from "./components/ServerCard.jsx";
 import Sidebar from "../../components/Sidebar.js";
-import { showAllServers } from "../../helper/ServerApi.jsx";
+import { showAllServerSub } from "../../helper/SubscriptionApi.jsx";
 const Dashboard = () => {
   const [AuthTypeVal, setAuthTypeVal] = useState(false);
   const [isAdmin, setIsAdminVal] = useState(false);
@@ -31,7 +31,7 @@ const Dashboard = () => {
   };
 
   const getServerDataFunc = () => {
-    const newPromise = showAllServers();
+    const newPromise = showAllServerSub()
     newPromise
       .then((data) => {
         setServerData(data);
@@ -41,7 +41,7 @@ const Dashboard = () => {
 
   const displayServers = serverData.map((index) => {
     return (
-      <ServerCard key={index.id} name={index.name} price="79" duration="30" />
+      <ServerCard key={index.id} name={index.name} price={index.price} duration={index.duration} />
     );
   });
 
