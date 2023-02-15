@@ -8,7 +8,8 @@ const Dashboard = () => {
   const [AuthTypeVal, setAuthTypeVal] = useState(false);
   const [isAdmin, setIsAdminVal] = useState(false);
   const [renderVal, setRenderVal] = useState();
-  const [serverData, setServerData] = useState([]);
+  const [serverData, setServerData] = useState([])
+
 
   const activeUserFunc = () => {
     const activeUserPromise = activeUser();
@@ -30,6 +31,8 @@ const Dashboard = () => {
       });
   };
 
+  //Server Display
+
   const getServerDataFunc = () => {
     const newPromise = showAllServerSub()
     newPromise
@@ -45,9 +48,14 @@ const Dashboard = () => {
     );
   });
 
+  //Server Status
+
+  
+
   useEffect(() => {
     activeUserFunc();
     getServerDataFunc();
+    
   },[]);
 
   return (

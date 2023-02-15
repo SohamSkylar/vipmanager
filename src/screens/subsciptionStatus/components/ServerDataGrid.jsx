@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { BsEmojiSunglassesFill } from "react-icons/bs";
 
-const ServerDataGrid = () => {
+const ServerDataGrid = ({name}) => {
   //let username
 
   // const [userData, setData] = useState();
@@ -52,7 +52,7 @@ const ServerDataGrid = () => {
 
             <div className="px-2">
               <div className="font-bold text-xl mb-2 text-amber-500">
-                Server Name:{" "}
+                Server Name:{name}
               </div>
               <div className="text-amber-600 text-base">Role: VIP </div>
             </div>

@@ -45,4 +45,14 @@ export async function showAllSub() {
       return Promise.reject(err.message)
     }
   }
+
+  export async function showSubStatus() {
+    try{
+      const {data} = await axios.get(`${BASE_URL}/serversub`);
+      //console.log(data)
+      return Promise.resolve(data)
+    }catch (err) {
+      return Promise.reject(err.message)
+    }
+  }
   

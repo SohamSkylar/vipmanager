@@ -3,10 +3,13 @@ import { activeUser } from "../../helper/UserApi.jsx";
 import Navbar from "./components/Navbar.js";
 import Sidebar from "../../components/Sidebar.js";
 import ServerDataGrid from "./components/ServerDataGrid.jsx";
+import { showAllServerSub } from "../../helper/SubscriptionApi.jsx";
+
 const SubscriptionStatus = () => {
   const [AuthTypeVal, setAuthTypeVal] = useState(false);
   const [isAdmin, setIsAdminVal] = useState(false);
   const [renderVal, setRenderVal] = useState();
+  const [statusData, setStatusData] = useState([]);
 
   const activeUserFunc = () => {
     const activeUserPromise = activeUser();
@@ -28,8 +31,24 @@ const SubscriptionStatus = () => {
       });
   };
 
+  const getStatusDataFunc = () => {
+    const newPromiseOne = showAllServerSub()
+    newPromiseOne
+      .then((data) => {
+        setStatusData(data);
+      })
+      .catch((err) => console.log(err.message));
+  };
+
+  const displayServerStatus = statusData.map((index) => {
+    return (
+      <ServerDataGrid name={index.name}/>
+    );
+  });
+
   useEffect(() => {
     activeUserFunc();
+    getStatusDataFunc();
   });
 
   return (
@@ -43,7 +62,7 @@ const SubscriptionStatus = () => {
             <div>
               {/* Card stats */}
               <div>
-                <ServerDataGrid />
+                {displayServerStatus}
               </div>
             </div>
           </div>
