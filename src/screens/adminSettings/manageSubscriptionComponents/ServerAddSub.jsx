@@ -1,21 +1,13 @@
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { addNewServer, showAllServers } from "../../../helper/ServerApi";
+import { createCustomerTable } from "../../../helper/CustomerApi";
+import { showAllServers } from "../../../helper/ServerApi";
 import { addNewServerSub, showAllSub } from "../../../helper/SubscriptionApi";
 
 const ServerAddSub = () => {
-  // const [serverSelected, setServerSelected] = useState();
-  // const [subSelected, setSubSelected] = useState();
   const [serverNames, setServerNames] = useState([]);
   const [SubNames, setSubNames] = useState([]);
-
-  // const handleServerSelect = (e) => {
-  //   setServerSelected(e.target.value);
-  // };
-  // const handleSubSelect = (e) => {
-  //   setSubSelected(e.target.value);
-  // };
 
   const getServerDataFunc = () => {
     const newPromise = showAllServers();
@@ -113,11 +105,11 @@ const ServerAddSub = () => {
               Price
             </label>
             <input
-              type="text"
+              type="number"
               {...formik.getFieldProps("price")}
               id="serverip"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="eg: 102.102.102.102"
+              placeholder="Enter Price in number"
               required
             />
           </div>
@@ -130,7 +122,7 @@ const ServerAddSub = () => {
               {...formik.getFieldProps("duration")}
               id="port"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="eg: 27015"
+              placeholder="Enter duration (in days)"
               required
             />
           </div>

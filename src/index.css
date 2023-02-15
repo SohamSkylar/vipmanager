@@ -12,7 +12,12 @@ body {
   background-color: rgb(128, 121, 117);
   background-size: cover;
   background-repeat: no-repeat;
-  height: 100vh;
+}
+
+@media (max-width: 1024px) {
+  .dashboardui {
+    height: 100vh;
+  }
 }
 
 .ManageServerTabui {

@@ -1,36 +1,67 @@
 import { useFormik } from "formik";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { createCustomerTable } from "../../../helper/CustomerApi";
-import { addNewServer } from "../../../helper/ServerApi";
-const AddServers = () => {
+import { showAllServers } from "../../../helper/ServerApi";
+import { showAllSub } from "../../../helper/SubscriptionApi";
+import { addNewCustomer } from "../../../helper/CustomerApi";
+
+const AddCustomer = () => {
+  const [serverNames, setServerNames] = useState([]);
+  const [SubNames, setSubNames] = useState([]);
+
+  const getServerDataFunc = () => {
+    const newPromise = showAllServers();
+    newPromise
+      .then((data) => {
+        setServerNames(data);
+      })
+      .catch((err) => console.log(err.message));
+  };
+
+  const getSubDataFunc = () => {
+    const newPromise = showAllSub();
+    newPromise
+      .then((data) => {
+        setSubNames(data);
+      })
+      .catch((err) => console.log(err.message));
+  };
+
   const formik = useFormik({
     initialValues: {
-      name: "",
-      ip: "",
-      port: "",
-      rcon: "",
+      servername: "",
+      username: "",
+      duration: "",
+      subtype: "",
     },
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
       // console.log(values)
       let toastBox = toast.loading("Loading...");
-      const addServerPromise = addNewServer(values);
-      const createUserTablePromise = createCustomerTable(values);
-      Promise.all([addServerPromise, createUserTablePromise])
+      const addNewCustomerPromise = addNewCustomer(values)
+      addNewCustomerPromise
         .then(
           (resolve) => {
-            toast.success("Server Added", {
+            toast.success("Server Subscription Added", {
               id: toastBox,
             });
           },
           (detail) => {
-            if (detail === "DUPLICATE_SERVER") {
-              toast.error("Server already exists", {
+            if (detail === "EMPTY_SUB") {
+              toast.error("Fill All Fields", {
                 id: toastBox,
               });
-            } else {
+            } else if(detail === "NO_USER_AVAILABLE"){
+              toast.error("Invalid Username", {
+                id: toastBox,
+              });
+            } else if(detail === "DUPLICATE_ENTRY"){
+              toast.error("User already has this subscription", {
+                id: toastBox,
+              });
+            }
+             else {
               toast.error("Some error occured", {
                 id: toastBox,
               });
@@ -43,63 +74,91 @@ const AddServers = () => {
     },
   });
 
+  useEffect(() => {
+    getServerDataFunc();
+    getSubDataFunc();
+  }, []);
+
   return (
     <>
       <Toaster position="top-right" reverseOrder={false}></Toaster>
-      <p className="font-bold font-sans text-lg">Add New Server</p>
+      <p className="font-bold font-sans text-lg">Add Subscription to User</p>
       <form onSubmit={formik.handleSubmit}>
         <div className="grid gap-6 mb-6 lg:grid-cols-4 mt-2">
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Server Name
+              Username
             </label>
             <input
               type="text"
-              {...formik.getFieldProps("name")}
-              id="servername"
+              {...formik.getFieldProps("username")}
+              id="username"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="eg: casual"
+              placeholder="Enter Existing Username"
               required
             />
           </div>
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Server IP
+              Select Server
             </label>
-            <input
-              type="text"
-              {...formik.getFieldProps("ip")}
-              id="serverip"
+            <select
+              id="tabs"
+              //value={serverSelected}
+              {...formik.getFieldProps("servername")}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="eg: 102.102.102.102"
-              required
-            />
+            >
+              <option value="">Select :</option>
+              {serverNames.map((data) => {
+                return (
+                  <option
+                    key={data.id}
+                    value={data.name}
+                    defaultValue={data.name}
+                  >
+                    {data.name}
+                  </option>
+                );
+              })}
+            </select>
           </div>
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Port
+              Duration
             </label>
             <input
               type="number"
-              {...formik.getFieldProps("port")}
+              {...formik.getFieldProps("duration")}
               id="port"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="eg: 27015"
+              placeholder="Enter duration (in days)"
               required
             />
           </div>
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Rcon Password
+              Select Subcription
             </label>
-            <input
-              type="password"
-              {...formik.getFieldProps("rcon")}
-              id="rconpass"
+
+            <select
+              id="sub"
+              //value={subSelected}
+              {...formik.getFieldProps("subtype")}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="eg: xyerqwas"
-              required
-            />
+            >
+              <option value="">Select :</option>
+              {SubNames.map((data) => {
+                return (
+                  <option
+                    key={data.id}
+                    // value={data.subtype}
+                    defaultValue={data.subtype}
+                  >
+                    {data.subtype}
+                  </option>
+                );
+              })}
+            </select>
           </div>
         </div>
         <div className="w-full justify-center text-center">
@@ -115,4 +174,4 @@ const AddServers = () => {
   );
 };
 
-export default AddServers;
+export default AddCustomer;

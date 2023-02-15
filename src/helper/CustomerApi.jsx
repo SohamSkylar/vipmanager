@@ -1,0 +1,32 @@
+import axios from "axios";
+
+const BASE_URL = "http://localhost:8001/api/subs/customer";
+
+export async function createCustomerTable(values) {
+  const tableName = { tableName: values.name };
+  try {
+    const {
+      data: { msg },
+      data,
+    } = await axios.post(`${BASE_URL}/createTable`, tableName);
+    //console.log(data)
+    if (msg === "success") return Promise.resolve();
+    else return Promise.reject(data.err);
+  } catch (err) {
+    return Promise.reject(err.message);
+  }
+}
+
+export async function addNewCustomer(customerdetails) {
+  try {
+    const {
+      data: { msg },
+    } = await axios.post(`${BASE_URL}/add`, customerdetails);
+    if (msg === "success") return Promise.resolve(msg);
+    else if (msg === "NO_USER_AVAILABLE") return Promise.reject(msg);
+    else if (msg === "DUPLICATE_ENTRY") return Promise.reject(msg);
+    else return Promise.reject("fail");
+  } catch (err) {
+    return Promise.reject(err.message);
+  }
+}
