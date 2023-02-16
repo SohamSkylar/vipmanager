@@ -9,7 +9,7 @@ import Register from './components/Register.jsx'
 import PageNotFound from './components/PageNotFound.jsx'
 import Dashboard from './screens/homepage/Dashboard';
 import AdminSettings from './screens/adminSettings/AdminSettings';
-import SubscriptionStatus from './screens/subsciptionStatus/SubscriptionStatus';
+import SubscriptionStatus from './screens/subscriptionStatus/SubscriptionStatus';
 
 const router = createBrowserRouter([
   {

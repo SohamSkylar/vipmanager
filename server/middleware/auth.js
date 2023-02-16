@@ -3,8 +3,9 @@ const jwt = require("jsonwebtoken");
 const ENV = require("../config.js");
 const otpGenerator = require("otp-generator");
 const pool = require("../database/conn");
+var SteamCommunity = require("steamcommunity");
 
-const tableName = "customer";
+const tableName = "user";
 
 const auth = async (req, res, next) => {
   try {
@@ -12,6 +13,7 @@ const auth = async (req, res, next) => {
     const decodedToken = await jwt.verify(token, ENV.JWT_SECRET);
     req.user = decodedToken;
     req.type = decodedToken.usertype;
+    console.log(decodedToken);
     next();
   } catch (error) {
     res.status(202).send("Please login");

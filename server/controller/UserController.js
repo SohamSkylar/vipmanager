@@ -2,8 +2,9 @@ const pool = require("../database/conn");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const ENV = require("../config.js");
+const SteamCommunity = require("steamcommunity");
 
-const tableName = "customer";
+const tableName = "user";
 
 const getAllUser = async (req, res) => {
   let conn;
@@ -38,24 +39,6 @@ const getSpecificUser = async (req, res) => {
     }
   } catch (err) {
     res.send("Invalid Username");
-  } finally {
-    if (conn) return conn.release();
-  }
-};
-
-const addUser = async (req, res) => {
-  let conn;
-  try {
-    conn = await pool.getConnection();
-    console.log("db is active");
-    let name = req.body.name;
-    let email = req.body.email;
-    const sqlQuery = `INSERT INTO ${tableName} (name, email) VALUES (?,?)`;
-    const result = await pool.query(sqlQuery, [name, email]);
-    console.log(result);
-    res.json({ userid: Number(result.insertId.toString()) });
-  } catch (err) {
-    res.send(err.message);
   } finally {
     if (conn) return conn.release();
   }
@@ -227,7 +210,8 @@ const loginUser = async (req, res) => {
             {
               userid: result[0].id,
               username: result[0].username,
-              usertype: "customer"
+              steamid: result[0].steamid,
+              usertype: "customer",
             },
             ENV.JWT_SECRET,
             { expiresIn: "24h" }
@@ -276,7 +260,7 @@ const loginAdmin = async (req, res) => {
             {
               userid: result[0].id,
               username: result[0].username,
-              usertype: "admin"
+              usertype: "admin",
             },
             ENV.JWT_SECRET,
             { expiresIn: "24h" }
@@ -362,21 +346,33 @@ const resetPassword = async (req, res) => {
 
 const activeUser = async (req, res) => {
   const userType = req.type;
-  if(userType === "admin"){
+  if (userType === "admin") {
     res.status(201).json({ msg: "active", type: "admin" });
-  } else
-  res.status(201).json({ msg: "active", type: "customer" });
+  } else res.status(201).json({ msg: "active", type: "customer" });
+};
+
+const checkSteamID = async (req, res) => {
+  const steamurlID = req.body.steamid
+  let community = new SteamCommunity();
+  community.getSteamUser(steamurlID, (err, details) => {
+    if (err) {
+      res.send(err.message);
+    } else {
+      return res.send(details);
+    }
+  });
+  //res.send("not exec");
 };
 
 module.exports = {
   getAllUser,
   getSpecificUser,
-  addUser,
   registerUser,
   loginUser,
   updateUser,
   resetPassword,
   activeUser,
   loginAdmin,
-  addAdmin
+  addAdmin,
+  checkSteamID,
 };

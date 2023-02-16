@@ -5,7 +5,7 @@ const ENV = require("../config.js");
 
 const SubtableName = "sublist";
 const ServertableName = "serverlist";
-const UsertableName = "customer";
+const UsertableName = "user";
 
 const authCustomer = async (req, res, next) => {
   try {

@@ -10,7 +10,6 @@ const {
 const {
   getAllUser,
   getSpecificUser,
-  addUser,
   registerUser,
   loginUser,
   updateUser,
@@ -18,6 +17,7 @@ const {
   activeUser,
   loginAdmin,
   addAdmin,
+  checkSteamID,
 } = require("../controller/UserController");
 const { generateOTP, verifyOTP } = require("../controller/OTPController.js");
 
@@ -29,6 +29,7 @@ userRouter.get("/user/:username", getSpecificUser);
 userRouter.get("/generateOTP", verifyUser, localVariables, generateOTP);
 userRouter.get("/verifyOTP", verifyOTP);
 userRouter.get("/auth", auth, activeUser);
+userRouter.get("/steamid", checkSteamID);
 
 //Put method
 
@@ -42,7 +43,5 @@ userRouter.post("/register", checkDuplicateUser, registerUser);
 userRouter.post("/addadmin", checkDuplicateAdmin, addAdmin);
 
 //delete method
-
-userRouter.post("/user", addUser);
 
 module.exports = userRouter;

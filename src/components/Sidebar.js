@@ -84,7 +84,7 @@ export default function Sidebar({ AuthTypeVal, UserTypeVal }) {
                     className="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
                     to="/"
                   >
-                    Tailwind Starter Kit
+                    INDINET GAMING
                   </Link>
                 </div>
                 <div className="w-6/12 flex justify-end">
@@ -133,7 +133,7 @@ export default function Sidebar({ AuthTypeVal, UserTypeVal }) {
                     to="/status"
                   >
                     <i className="fas fa-newspaper text-blueGray-400 mr-2 text-sm"></i>{" "}
-                    Subcription Status
+                    Subscription Status
                   </NavLink>
                 </li>
               ) : null}
