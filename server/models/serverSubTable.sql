@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS `serverSublist` (
+  `id` INT(10) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  `price` VARCHAR(45) NOT NULL,
+  `duration` VARCHAR(45) NOT NULL,
+  `subtype` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;

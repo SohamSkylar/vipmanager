@@ -61,10 +61,10 @@ export async function registerUserValidate(values) {
 }
 
 function registerUserVerify(errors = {}, values) {
-  if (!values.fullName) {
-    errors.fullName = toast.error("Full Name required");
-  } else if (values.fullName.includes(" ")) {
-    errors.fullName = toast.error("Invalid Name");
+  if (!values.name) {
+    errors.name = toast.error("Full Name required");
+  } else if (values.name.includes(" ")) {
+    errors.name = toast.error("Invalid Name");
   }
 
   if (!values.email) {

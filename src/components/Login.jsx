@@ -1,11 +1,21 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { TiUser } from "react-icons/ti";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
 import { userValidate } from "../helper/validate";
+import { loginAdmin, loginUser } from "../helper/UserApi";
 
-const Login = () => {
+const Login = (props) => {
+  
+  const navigate = useNavigate();
+  
+  const successFunc = () => {
+    setTimeout(() => {
+      navigate("/");
+    }, 1500);
+    return <b>Logged in Successfully!</b>
+  };
 
   const formik = useFormik({
     initialValues  : {
@@ -16,7 +26,21 @@ const Login = () => {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async values => {
-      console.log(values)
+      
+      // console.log(values)
+      if(props.type === 'adminlogin'){
+        var loginPromise = loginAdmin(values)
+      } else {
+        var loginPromise = loginUser(values);
+      }
+      toast.promise(loginPromise, {
+        loading: "logging in",
+        success: successFunc,
+        error:  "login unsuccessful"
+      })
+      loginPromise.then(res => {
+        localStorage.setItem('token', res)
+      })
     }
   })
 

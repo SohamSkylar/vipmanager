@@ -1,28 +1,74 @@
 import React from "react";
 import { TiUser } from "react-icons/ti";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
 import { registerUserValidate } from "../helper/validate";
 import { useState } from "react";
 import convertToBase64 from "../helper/convertToBase64.jsx";
+import { registerAdmin, registerUser } from "../helper/UserApi";
+import { useNavigate } from "react-router-dom";
 
-const Register = () => {
+const Register = (props) => {
   const [file, setFile] = useState("");
   const [imgReady, setImgReady] = useState(false);
+  const navigate = useNavigate();
 
+  const successFunc = () => {
+    setTimeout(() => {
+      navigate("/");
+    }, 1500);
+  };
   const formik = useFormik({
     initialValues: {
       username: "",
       password: "",
       email: "",
-      fullName: ""
+      name: "",
     },
     validate: registerUserValidate,
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
+      let toastBox = toast.loading("Loading...");
+
       values = await Object.assign(values, { profilePic: file || "" });
-      // console.log(values);
+
+      if(props.type === "adminRegister") var registerPromise = registerAdmin(values)
+      else var registerPromise = registerUser(values);
+
+      registerPromise
+        .then(
+          (resolve) => {
+            toast.success('Registered!!!', {
+              id: toastBox
+            })
+            successFunc()
+          },
+          (reject) => {
+            console.log("reject: " + reject);
+            if (reject.includes("409")) {
+              toast.error("Username already Exists", {
+                id: toastBox,
+              });
+            } else if (reject.includes("410")) {
+              toast.error("Email already Exists", {
+                id: toastBox,
+              });
+            } else if (reject.includes("411")) {
+              toast.error("Username and Email already Exists", {
+                id: toastBox,
+              });
+            }
+             else {
+              toast.error("unknown error", {
+                id: toastBox,
+              });
+            }
+          }
+        )
+        .catch((status) => {
+          if (status === 409) return true;
+        });
     },
   });
 
@@ -73,7 +119,7 @@ const Register = () => {
               <div className="gap-5 textbox flex flex-col items-center py-4 w-full">
                 <input
                   type="text"
-                  {...formik.getFieldProps("fullName")}
+                  {...formik.getFieldProps("name")}
                   placeholder="Full Name"
                   className="block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                 />
@@ -106,7 +152,7 @@ const Register = () => {
             <div className="text-center py-4">
               <span className="text-gray-500">
                 Already a Member?
-                <a href="/" className="text-red-500 pl-1">
+                <a href="/login" className="text-red-500 pl-1">
                   Login
                 </a>
               </span>
