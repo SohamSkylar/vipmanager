@@ -13,6 +13,7 @@ const SubscriptionStatus = () => {
   const [isAdmin, setIsAdminVal] = useState(false);
   const [renderVal, setRenderVal] = useState();
   const [customerData, setCustomerData] = useState([]);
+  const [statusRenderPermit, setStatusRenderPermit] = useState();
 
   const activeUserFunc = () => {
     const activeUserPromise = activeUser();
@@ -40,8 +41,12 @@ const SubscriptionStatus = () => {
     const newPromise = fetchCustomerData(msg);
     newPromise
       .then((data) => {
-        setCustomerData(data);
-        console.log(data);
+        if(data.msg === "NO_DATA") setStatusRenderPermit(false)
+        else{
+          setCustomerData(data);
+          console.log(data.msg);
+          setStatusRenderPermit(true)
+        }
       })
       .catch((err) => console.log(err.message));
   };
@@ -77,7 +82,7 @@ const SubscriptionStatus = () => {
             <div>
               {/* Card stats */}
               <div>
-              {displayStatus}
+              {statusRenderPermit && displayStatus}
               </div>
             </div>
           </div>
