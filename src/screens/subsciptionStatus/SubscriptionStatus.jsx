@@ -3,10 +3,16 @@ import { activeUser } from "../../helper/UserApi.jsx";
 import Navbar from "./components/Navbar.js";
 import Sidebar from "../../components/Sidebar.js";
 import ServerDataGrid from "./components/ServerDataGrid.jsx";
+import {
+  activeCustomer,
+  fetchCustomerData,
+} from "../../helper/CustomerApi.jsx";
+
 const SubscriptionStatus = () => {
   const [AuthTypeVal, setAuthTypeVal] = useState(false);
   const [isAdmin, setIsAdminVal] = useState(false);
   const [renderVal, setRenderVal] = useState();
+  const [customerData, setCustomerData] = useState([]);
 
   const activeUserFunc = () => {
     const activeUserPromise = activeUser();
@@ -28,9 +34,37 @@ const SubscriptionStatus = () => {
       });
   };
 
+  
+
+  const getCustomerDataFunc = (msg) => {
+    const newPromise = fetchCustomerData(msg);
+    newPromise
+      .then((data) => {
+        setCustomerData(data);
+        console.log(data);
+      })
+      .catch((err) => console.log(err.message));
+  };
+
+  const displayStatus = customerData.map((index, id) => {
+    return (
+      <ServerDataGrid key={id} servername={index.servername} username={index.username} duration={index.duration} subtype={index.subtype} />
+    );
+  });
+
   useEffect(() => {
     activeUserFunc();
-  });
+    const activeCustomerFunc = () => {
+      const activeCustomerPromise = activeCustomer();
+      activeCustomerPromise
+        .then((msg) => {
+          getCustomerDataFunc(msg)
+        })
+        .catch((err) => console.log(err.message));
+    };
+
+    activeCustomerFunc();
+  }, []);
 
   return (
     <>
@@ -43,7 +77,7 @@ const SubscriptionStatus = () => {
             <div>
               {/* Card stats */}
               <div>
-                <ServerDataGrid />
+              {displayStatus}
               </div>
             </div>
           </div>

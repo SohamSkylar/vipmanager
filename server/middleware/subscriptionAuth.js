@@ -1,9 +1,22 @@
 const express = require("express");
 const pool = require("../database/conn");
+const jwt = require("jsonwebtoken");
+const ENV = require("../config.js");
 
 const SubtableName = "sublist";
+const ServertableName = "serverlist";
 const UsertableName = "customer";
-const ServerSubtableName = "serverSublist";
+
+const authCustomer = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decodedToken = await jwt.verify(token, ENV.JWT_SECRET);
+    req.user = decodedToken;
+    next();
+  } catch (error) {
+    res.status(202).send({ msg: "INVALID_CUSTOMER", err: error.message });
+  }
+};
 
 const checkDuplicateSubscription = async (req, res, next) => {
   let conn;
@@ -110,9 +123,33 @@ const verifyCustomer = async (req, res, next) => {
   }
 };
 
+const getAllCustomerTables = async (req, res, next) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const sqlQuery = `SELECT name FROM ${ServertableName}`;
+    const result = await conn.query(sqlQuery);
+    const userRows = JSON.parse(JSON.stringify(result));
+    // console.log(userRows[0].name);
+    let tableList = [];
+    for(let i = 0; i<userRows.length; i++){
+      tableList[i] = userRows[i].name
+    }
+    // console.log(tableList)
+    req.tableName = tableList;
+    next();
+  } catch (err) {
+    res.send(err.message);
+  } finally {
+    if (conn) return conn.release();
+  }
+};
+
 module.exports = {
   checkDuplicateSubscription,
   checkAllFieldsServerSub,
   verifyCustomer,
   checkAllFieldsCustomer,
+  authCustomer,
+  getAllCustomerTables,
 };

@@ -3,6 +3,8 @@ const {
   createCustomerTable,
   addNewCustomer,
   showAllCustomers,
+  activeCustomer,
+  getCustomerData,
 } = require("../controller/CustomerController");
 const {
   showAllSubscriptions,
@@ -15,6 +17,8 @@ const {
   checkAllFieldsServerSub,
   verifyCustomer,
   checkAllFieldsCustomer,
+  authCustomer,
+  getAllCustomerTables,
 } = require("../middleware/subscriptionAuth");
 
 const subscriptionRouter = express.Router();
@@ -23,6 +27,9 @@ const subscriptionRouter = express.Router();
 subscriptionRouter.get("/", showAllSubscriptions);
 subscriptionRouter.get("/serversub", showAllServerSub);
 subscriptionRouter.get("/customer", showAllCustomers);
+// subscriptionRouter.get("/customer/id", getCustomerData);
+subscriptionRouter.get("/customer/auth", authCustomer, activeCustomer);
+subscriptionRouter.get("/customer/id/:username", getAllCustomerTables, getCustomerData);
 
 //post
 subscriptionRouter.post("/add", checkDuplicateSubscription, addNewSubscription);

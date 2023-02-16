@@ -30,3 +30,29 @@ export async function addNewCustomer(customerdetails) {
     return Promise.reject(err.message);
   }
 }
+
+export async function fetchCustomerData(customerdetails) {
+  // console.log("details: "+customerdetails)
+  try {
+    const { data } = await axios.get(`${BASE_URL}/id/${customerdetails}`);
+    //console.log(data)
+    return Promise.resolve(data);
+  } catch (err) {
+    return Promise.reject(err.message);
+  }
+}
+
+export async function activeCustomer() {
+  try {
+    const userToken = await localStorage.getItem("token");
+    const {
+      data: { msg },
+    } = await axios.get(`${BASE_URL}/auth`, {
+      headers: { Authorization: `Bearer ${userToken}` },
+    });
+    if (msg === "INVALID_CUSTOMER") return Promise.reject(msg);
+    else return Promise.resolve(msg);
+  } catch (err) {
+    return Promise.reject({ error: "Customer Auth Failed" });
+  }
+}

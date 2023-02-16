@@ -1,30 +1,7 @@
 import React from "react";
-import axios from "axios";
-import { useState } from "react";
-import { useEffect } from "react";
 import { BsEmojiSunglassesFill } from "react-icons/bs";
 
-const ServerDataGrid = () => {
-  //let username
-
-  // const [userData, setData] = useState();
-
-  const getUserData = async () => {
-    const userData = await axios.get("http://localhost:8001/api/user");
-    console.log(userData.data[0].username);
-  };
-
-  useEffect(() => {
-    getUserData();
-  });
-
-  //console.log()
-
-  // const users = userData?.map(item=>{
-  //     username = item.username
-  //     console.log(username)
-  // })
-  //console.log(users)
+const ServerDataGrid = ({username, servername, duration, subtype}) => {
 
   return (
     <div className="p-4">
@@ -41,7 +18,7 @@ const ServerDataGrid = () => {
               >
                 <path d="M4 8V6a6 6 0 1 1 12 0v2h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-8c0-1.1.9-2 2-2h1zm5 6.73V17h2v-2.27a2 2 0 1 0-2 0zM7 6v2h6V6a3 3 0 0 0-6 0z" />
               </svg>
-              Skylar's VIP status
+              {username}'s VIP status
             </p>
 
             <div className="text-sm flow-root mr-0 px-2">
@@ -52,9 +29,9 @@ const ServerDataGrid = () => {
 
             <div className="px-2">
               <div className="font-bold text-xl mb-2 text-amber-500">
-                Server Name:{" "}
+                Server Name: {servername}
               </div>
-              <div className="text-amber-600 text-base">Role: VIP </div>
+              <div className="text-amber-600 text-base">Role: {subtype} </div>
             </div>
           </div>
 
@@ -69,7 +46,7 @@ const ServerDataGrid = () => {
             </p>
             <br />
             <p className="text-base font-semibold text-slate-900 py-4">
-              Days Left: 42
+              Days Left: {duration}
             </p>
             <div className="float-right ml-auto mb-4">
               <button className="rounded-lg bg-slate-900 px-5 py-2 text-sm text-green-500 font-medium">

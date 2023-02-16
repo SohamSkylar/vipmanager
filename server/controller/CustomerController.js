@@ -49,27 +49,67 @@ const addNewCustomer = async (req, res) => {
       });
     }
   } catch (err) {
-    if(err.message.includes('Duplicate'))
-    res.send({ msg: "DUPLICATE_ENTRY" });
+    if (err.message.includes("Duplicate")) res.send({ msg: "DUPLICATE_ENTRY" });
     else res.send({ err: err.message });
   } finally {
     if (conn) return conn.release();
   }
 };
 
-const showAllCustomers = async (req, res) => {
-    let conn;
-    try {
-      const tableName = req.query.tableName
-      conn = await pool.getConnection();
-      const sqlQuery = `SELECT * FROM ${tableName}`;
-      const result = await conn.query(sqlQuery);
-      res.json(result);
-    } catch (err) {
-      res.send(err.message);
-    } finally {
-      if (conn) return conn.release();
+const getCustomerData = async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    console.log("getCustomerData is active");
+    const tableName = req.tableName;
+    let conditionVar = []
+    for(let i = 0; i<tableName.length; i++){
+      conditionVar[i] = `SELECT *,"${tableName[i]}" as servername  FROM ${tableName[i]} WHERE username="${req.params.username}"`
     }
-  };
+    const sqlQuery = conditionVar.join(' UNION ')
+    // console.log(conditionString)
+    // console.log(tableName)
+    let result = await pool.query(sqlQuery, req.params.username);
+    if (result.length === 0) {
+      res.send({msg: "NO_DATA"});
+    } else {
+      res.json(result);
+    }
+    // res.json(result);
+    // console.log(tableName)
+    // res.send('ok')
+  } catch (err) {
+    res.send({msg: "Invalid Username", err: err.message});
+  } finally {
+    if (conn) return conn.release();
+  }
+};
 
-module.exports = { createCustomerTable, addNewCustomer, showAllCustomers };
+const showAllCustomers = async (req, res) => {
+  let conn;
+  try {
+    const tableName = req.query.tableName;
+    conn = await pool.getConnection();
+    const sqlQuery = `SELECT * FROM ${tableName}`;
+    const result = await conn.query(sqlQuery);
+    res.json(result);
+  } catch (err) {
+    res.send(err.message);
+  } finally {
+    if (conn) return conn.release();
+  }
+};
+
+const activeCustomer = async (req, res) => {
+  const username = req.user.username;
+  if (username) res.status(201).json({ msg: username });
+  else res.status(201).json({ msg: "NO_USERNAME_FOUND" });
+};
+
+module.exports = {
+  createCustomerTable,
+  addNewCustomer,
+  showAllCustomers,
+  activeCustomer,
+  getCustomerData,
+};
