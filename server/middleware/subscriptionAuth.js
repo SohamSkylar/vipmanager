@@ -130,12 +130,13 @@ const getAllCustomerTables = async (req, res, next) => {
     const sqlQuery = `SELECT name FROM ${ServertableName}`;
     const result = await conn.query(sqlQuery);
     const userRows = JSON.parse(JSON.stringify(result));
+    console.log(userRows)
     // console.log(userRows[0].name);
     let tableList = [];
     for(let i = 0; i<userRows.length; i++){
       tableList[i] = userRows[i].name
     }
-    // console.log(tableList)
+    console.log(tableList)
     req.tableName = tableList;
     next();
   } catch (err) {

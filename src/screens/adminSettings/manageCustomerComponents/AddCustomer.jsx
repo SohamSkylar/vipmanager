@@ -60,8 +60,7 @@ const AddCustomer = () => {
               toast.error("User already has this subscription", {
                 id: toastBox,
               });
-            }
-             else {
+            }else {
               toast.error("Some error occured", {
                 id: toastBox,
               });
