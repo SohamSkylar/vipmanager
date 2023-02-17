@@ -2,7 +2,6 @@ import React from 'react';
 import './App.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Login from './components/Login.jsx'
-import Profile from './components/Profile.jsx'
 import Recovery from './components/Recovery.jsx'
 import Reset from './components/Reset.jsx'
 import Register from './components/Register.jsx'
@@ -10,6 +9,7 @@ import PageNotFound from './components/PageNotFound.jsx'
 import Dashboard from './screens/homepage/Dashboard';
 import AdminSettings from './screens/adminSettings/AdminSettings';
 import SubscriptionStatus from './screens/subscriptionStatus/SubscriptionStatus';
+import ProfileDashboard from './screens/updateProfile/ProfileDashboard';
 
 const router = createBrowserRouter([
   {
@@ -42,7 +42,7 @@ const router = createBrowserRouter([
   },
   {
     path : '/profile',
-    element : <Profile/>
+    element : <ProfileDashboard/>
   },
   {
     path : '/adminsettings',

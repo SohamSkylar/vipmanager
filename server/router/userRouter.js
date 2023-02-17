@@ -33,7 +33,9 @@ userRouter.get("/steamid", checkSteamID);
 
 //Put method
 
-userRouter.put("/update", auth, updateUser);
+userRouter.patch("/update", auth, updateUser);
+
+
 userRouter.put("/resetPassword", verifyUser, resetPassword);
 
 //Post method

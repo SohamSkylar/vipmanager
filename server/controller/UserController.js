@@ -297,10 +297,19 @@ const updateUser = async (req, res) => {
       const name = req.body.name;
       const email = req.body.email;
       const username = req.body.username;
-      if (!name || !email || !username) {
-        throw new Error("ENTER_ALL_FIELDS");
+      const steamid = req.body.steamid
+      let sqlQuery
+      if (name) {
+        sqlQuery = `UPDATE ${tableName} SET name='${name}' WHERE id=?`;
+      }else if (username) {
+        sqlQuery = `UPDATE ${tableName} SET username='${username}' WHERE id=?`;
+      }else if (email) {
+        sqlQuery = `UPDATE ${tableName} SET email='${email}' WHERE id=?`;
+      }else if (steamid) {
+        sqlQuery = `UPDATE ${tableName} SET steamid='${steamid}' WHERE id=?`;
+      }else {
+        return res.send({msg: "Wrong body data"})
       }
-      const sqlQuery = `UPDATE ${tableName} SET name='${name}',email='${email}',username='${username}' WHERE id=?`;
       const result = await pool.query(sqlQuery, userid);
       console.log(result);
       if (Number(result.insertId.toString()) >= 0) res.json({ msg: "success" });
