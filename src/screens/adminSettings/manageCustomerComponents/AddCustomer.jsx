@@ -37,7 +37,7 @@ const AddCustomer = () => {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
-      // console.log(values)
+      console.log(values)
       let toastBox = toast.loading("Loading...");
       const addNewCustomerPromise = addNewCustomer(values)
       addNewCustomerPromise

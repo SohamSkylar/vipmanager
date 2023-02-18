@@ -1,14 +1,17 @@
 import { useFormik } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { updateNewUser } from "../../../helper/UserApi";
+import { checkSteamID, updateNewUser } from "../../../helper/UserApi";
 
 const UpdateProfileCard = () => {
+  const [derivedSteamID, setDerivedSteamID] = useState(null);
+
   const formik = useFormik({
     initialValues: {
       changeValue: "",
       username: "",
-      email: ""
+      email: "",
+      steamid: "",
     },
     validateOnBlur: false,
     validateOnChange: false,
@@ -16,33 +19,86 @@ const UpdateProfileCard = () => {
       console.log(values);
       let toastBox = toast.loading("Loading...");
 
-      var updatePromise = updateNewUser(values);
-
-      updatePromise
-        .then(
-          (res) => {
-            if (res === "success") {
-              toast.success("Update Successful", {
+      if (values.changeValue === "steamid") {
+        let checkSteamIDPromise = checkSteamID(values);
+        checkSteamIDPromise
+          .then(
+            (steamObj) => {
+              setDerivedSteamID(steamObj.steamid);
+              return Promise.resolve(steamObj);
+            },
+            (rejectMsg) => {
+              toast.error(`${rejectMsg}`, {
                 id: toastBox,
               });
             }
-          },
-          (reject) => {
-            if (reject === "AUTH_FAILED") {
-              toast.error("Please Login again", {
-                id: toastBox,
+          )
+          .then(() => {
+            if (derivedSteamID != null) {
+              const updatePromise = updateNewUser({
+                steamid: derivedSteamID,
+                changeValue: "steamid",
               });
-            } else {
-                console.log(reject)
-              toast.error(`${reject}`, {
-                id: toastBox,
-              });
+              updatePromise
+                .then(
+                  (res) => {
+                    if (res === "success") {
+                      toast.success("Update Successful", {
+                        id: toastBox,
+                      });
+                    }
+                  },
+                  (reject) => {
+                    if (reject === "AUTH_FAILED") {
+                      toast.error("Please Login again", {
+                        id: toastBox,
+                      });
+                    } else {
+                      console.log(reject);
+                      toast.error(`${reject}`, {
+                        id: toastBox,
+                      });
+                    }
+                  }
+                )
+                .catch((error) => {
+                  console.log(error);
+                });
             }
-          }
-        )
-        .catch((error) => {
-          console.log(error);
-        });
+          })
+          .catch((err) => {
+            toast.error(`${err.message}`, {
+              id: toastBox,
+            });
+          });
+      } else {
+        const updatePromise = updateNewUser(values);
+        updatePromise
+          .then(
+            (res) => {
+              if (res === "success") {
+                toast.success("Update Successful", {
+                  id: toastBox,
+                });
+              }
+            },
+            (reject) => {
+              if (reject === "AUTH_FAILED") {
+                toast.error("Please Login again", {
+                  id: toastBox,
+                });
+              } else {
+                console.log(reject);
+                toast.error(`${reject}`, {
+                  id: toastBox,
+                });
+              }
+            }
+          )
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     },
   });
 
@@ -63,6 +119,7 @@ const UpdateProfileCard = () => {
               <option value="">Select</option>
               <option value="username">Change Username</option>
               <option value="email">Change Email</option>
+              <option value="steamid">Change Steam Url</option>
             </select>
           </div>
           <h5 className="text-xl font-medium text-gray-900 dark:text-white">
@@ -71,7 +128,7 @@ const UpdateProfileCard = () => {
           {formik.values.changeValue === "username" && (
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Change Username To:
+                Enter New Username :
               </label>
               <input
                 type="text"
@@ -84,25 +141,38 @@ const UpdateProfileCard = () => {
               />
             </div>
           )}
-          {/* {selected === "email" && (
+          {formik.values.changeValue === "email" && (
             <div>
-              <label
-                for="password"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Your password
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Enter New Email :
               </label>
               <input
-                type="password"
-                name="password"
-                {...formik.getFieldProps("")}
-                id="password"
-                placeholder="••••••••"
+                type="email"
+                name="email"
+                {...formik.getFieldProps("email")}
+                id="email"
+                placeholder="example@gmail.com"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 required
               />
             </div>
-          )} */}
+          )}
+          {formik.values.changeValue === "steamid" && (
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Enter New Steam Url :
+              </label>
+              <input
+                type="text"
+                name="steamid"
+                {...formik.getFieldProps("steamid")}
+                id="steamid"
+                placeholder="https://steamcommunity.com/id/example"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                required
+              />
+            </div>
+          )}
           <div className="flex items-start">
             <div className="flex items-start"></div>
           </div>
