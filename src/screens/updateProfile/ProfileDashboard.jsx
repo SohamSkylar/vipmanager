@@ -54,7 +54,7 @@ const ProfileDashboard = () => {
           <div className="px-4 md:px-10 mx-auto w-full">
             <div>
               {/* Card stats */}
-              <div className="flex flex-wrap lg:overflow-hidden overflow-scroll serverCardui">
+              <div className=" mx-auto w-full">
                 <UpdateProfileCard/>
               </div>
             </div>

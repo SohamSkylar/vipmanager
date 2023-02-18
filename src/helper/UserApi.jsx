@@ -135,37 +135,6 @@ export async function updateNewUser(customerdetails) {
     } catch (err) {
       return Promise.reject({ error: err.message });
     }
-  // else if (customerdetails.changeValue === "steamid") {
-  //   var newdetails = {
-  //     steamid: customerdetails.steamid,
-  //   };
-  //   new Promise(async (resolve, reject) => {
-  //     const {
-  //       data: { steamid, msg },
-  //     } = await axios.post(`${BASE_URL}/steamid`, newdetails);
-  //     if (msg === "success") {
-  //       // console.log("steamid: "+steamid+", profilename: "+profilename)
-  //       let fetchedDetails = {
-  //         steamid: steamid,
-  //       };
-  //       return resolve(fetchedDetails);
-  //     } else return reject(msg);
-  //   })
-  //     .then(async (fetchedDetails) => {
-  //       try {
-  //         const {
-  //           data: { msg },
-  //         } = await axios.patch(`${BASE_URL}/update`, fetchedDetails, config);
-  //         if (msg === "success") return Promise.resolve(msg);
-  //         else return Promise.reject(msg);
-  //       } catch (err) {
-  //         return Promise.reject({ error: err.message });
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       return Promise.reject(err.message);
-  //     });
-  // }
 }
 
 // export async function generateOTP(username){
