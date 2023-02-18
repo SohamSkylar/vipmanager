@@ -41,7 +41,7 @@ export async function registerAdmin(admindetails) {
 export async function loginUser(userdetails) {
   try {
     const {
-      data: { msg, token },
+      data: { token },
       status,
     } = await axios.post(`${BASE_URL}/login`, userdetails);
     if (status === 200) return Promise.resolve(token);
@@ -54,7 +54,7 @@ export async function loginUser(userdetails) {
 export async function loginAdmin(admindetails) {
   try {
     const {
-      data: { msg, token },
+      data: { token },
       status,
     } = await axios.post(`${BASE_URL}/adminlogger`, admindetails);
     if (status === 200) return Promise.resolve(token);
@@ -79,13 +79,37 @@ export async function updateUser(response) {
 export async function activeUser() {
   try {
     const userToken = await localStorage.getItem("token");
-    const { data: {type}, status } = await axios.get(`${BASE_URL}/auth`, {
+    const {
+      data: { type },
+    } = await axios.get(`${BASE_URL}/auth`, {
       headers: { Authorization: `Bearer ${userToken}` },
     });
-      return Promise.resolve(type);
-    
+    return Promise.resolve(type);
   } catch (err) {
     return Promise.reject({ error: "Auth Failed" });
+  }
+}
+
+export async function updateNewUser(customerdetails) {
+  if (customerdetails.changeValue === "username") {
+    var newdetails = {
+      username: customerdetails.username,
+    };
+  }
+
+  let config = {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  };
+  try {
+    const {
+      data: { msg },
+    } = await axios.patch(`${BASE_URL}/update`, newdetails, config);
+    if (msg === "success") return Promise.resolve(msg);
+    else return Promise.reject(msg);
+  } catch (err) {
+    return Promise.reject({ error: "auth Failed" });
   }
 }
 

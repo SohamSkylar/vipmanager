@@ -297,18 +297,18 @@ const updateUser = async (req, res) => {
       const name = req.body.name;
       const email = req.body.email;
       const username = req.body.username;
-      const steamid = req.body.steamid
-      let sqlQuery
+      const steamid = req.body.steamid;
+      let sqlQuery;
       if (name) {
         sqlQuery = `UPDATE ${tableName} SET name='${name}' WHERE id=?`;
-      }else if (username) {
+      } else if (username) {
         sqlQuery = `UPDATE ${tableName} SET username='${username}' WHERE id=?`;
-      }else if (email) {
+      } else if (email) {
         sqlQuery = `UPDATE ${tableName} SET email='${email}' WHERE id=?`;
-      }else if (steamid) {
+      } else if (steamid) {
         sqlQuery = `UPDATE ${tableName} SET steamid='${steamid}' WHERE id=?`;
-      }else {
-        return res.send({msg: "Wrong body data"})
+      } else {
+        return res.send({ msg: "Wrong body data" });
       }
       const result = await pool.query(sqlQuery, userid);
       console.log(result);
@@ -361,16 +361,58 @@ const activeUser = async (req, res) => {
 };
 
 const checkSteamID = async (req, res) => {
-  const steamurlID = req.body.steamid
-  let community = new SteamCommunity();
-  community.getSteamUser(steamurlID, (err, details) => {
-    if (err) {
-      res.send(err.message);
+  try {
+    const steamIDUrl = req.body.steamid;
+    const steamIDBreaker = steamIDUrl.split("/");
+    if (steamIDBreaker.length > 4) var steamIDRaw = steamIDBreaker[4];
+    else return res.send({ msg: "WRONG_URL" });
+
+    let regExp = /[a-zA-Z]/g;
+    let community = new SteamCommunity();
+    if (regExp.test(steamIDRaw)) {
+      community.getSteamUser(steamIDRaw, (err, details) => {
+        if (err) {
+          res.send({ err: "WRONG_ID" });
+        } else {
+          // console.log(details);
+          let newSteamID = BigInt(details.steamID.accountid);
+          let steamID = `STEAM_1:${newSteamID % 2n}:${newSteamID / 2n}`;
+          res.send({ steamid: steamID, profilename: details.name });
+        }
+      });
     } else {
-      return res.send(details);
+      let accountID = BigInt(steamIDRaw) - 76561197960265728n;
+      let SteamIDObj = SteamCommunity.SteamID;
+      let newSteamID = new SteamIDObj(`[U:1:${accountID}]`);
+      new Promise((resolve, reject) => {
+        community.getSteamUser(newSteamID, (err, details) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(details.name);
+          }
+        });
+      })
+        .then(
+          (name) => {
+            // console.log(accountID);
+            if (accountID < 0n) accountID = accountID - accountID * 2n;
+            let steamID = `STEAM_1:${accountID % 2n}:${accountID / 2n}`;
+            res.send({ steamid: steamID, profilename: name });
+          },
+          (err) => {
+            res.send({ msg: "WRONG_ID" });
+          }
+        )
+        .catch((err) => {
+          return res.send({ err: err });
+        });
     }
-  });
-  //res.send("not exec");
+  } catch (err) {
+    if (err.message.includes("Unknown SteamID input format"))
+      res.send({ msg: "WRONG_ID" });
+    else res.send({ err: err.message });
+  }
 };
 
 module.exports = {
