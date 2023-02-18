@@ -1,11 +1,9 @@
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { checkSteamID, updateNewUser } from "../../../helper/UserApi";
 
 const UpdateProfileCard = () => {
-  const [derivedSteamID, setDerivedSteamID] = useState(null);
-
   const formik = useFormik({
     initialValues: {
       changeValue: "",
@@ -16,15 +14,16 @@ const UpdateProfileCard = () => {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
-      console.log(values);
+      //console.log(values);
       let toastBox = toast.loading("Loading...");
 
       if (values.changeValue === "steamid") {
+        //console.log("exec0");
         let checkSteamIDPromise = checkSteamID(values);
         checkSteamIDPromise
           .then(
             (steamObj) => {
-              setDerivedSteamID(steamObj.steamid);
+              //console.log("exec1");
               return Promise.resolve(steamObj);
             },
             (rejectMsg) => {
@@ -33,38 +32,38 @@ const UpdateProfileCard = () => {
               });
             }
           )
-          .then(() => {
-            if (derivedSteamID != null) {
-              const updatePromise = updateNewUser({
-                steamid: derivedSteamID,
-                changeValue: "steamid",
-              });
-              updatePromise
-                .then(
-                  (res) => {
-                    if (res === "success") {
-                      toast.success("Update Successful", {
-                        id: toastBox,
-                      });
-                    }
-                  },
-                  (reject) => {
-                    if (reject === "AUTH_FAILED") {
-                      toast.error("Please Login again", {
-                        id: toastBox,
-                      });
-                    } else {
-                      console.log(reject);
-                      toast.error(`${reject}`, {
-                        id: toastBox,
-                      });
-                    }
+          .then((steamObj) => {
+            //console.log("exec2");
+            const updatePromise = updateNewUser({
+              steamid: steamObj.steamid,
+              changeValue: "steamid",
+            });
+            updatePromise
+              .then(
+                (res) => {
+                  //console.log("exec3");
+                  if (res === "success") {
+                    toast.success("Update Successful", {
+                      id: toastBox,
+                    });
                   }
-                )
-                .catch((error) => {
-                  console.log(error);
-                });
-            }
+                },
+                (reject) => {
+                  if (reject === "AUTH_FAILED") {
+                    toast.error("Please Login again", {
+                      id: toastBox,
+                    });
+                  } else {
+                    console.log(reject);
+                    toast.error(`${reject}`, {
+                      id: toastBox,
+                    });
+                  }
+                }
+              )
+              .catch((error) => {
+                console.log(error);
+              });
           })
           .catch((err) => {
             toast.error(`${err.message}`, {
