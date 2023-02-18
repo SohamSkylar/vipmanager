@@ -33,7 +33,8 @@ const UpdateProfileCard = () => {
                 id: toastBox,
               });
             } else {
-              toast.error(reject, {
+                console.log(reject)
+              toast.error(`${reject}`, {
                 id: toastBox,
               });
             }

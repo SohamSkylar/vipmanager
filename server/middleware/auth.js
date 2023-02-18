@@ -15,7 +15,7 @@ const auth = async (req, res, next) => {
     console.log(decodedToken);
     next();
   } catch (error) {
-    res.status(202).send({msg: "AUTH_FAILED"});
+    res.status(202).send({ msg: "AUTH_FAILED" });
   }
 };
 
@@ -54,42 +54,74 @@ const checkDuplicateUser = async (req, res, next) => {
   try {
     let email = req.body.email;
     let username = req.body.username;
-    let duplicateUsername = false,
-      duplicateEmail = false;
-    new Promise(async (resolve, reject) => {
-      const existUserQuery = `SELECT COUNT(*) as existUsers FROM ${tableName} WHERE username=?`;
-      const existUserQueryResult = await pool.query(existUserQuery, username);
-      const existUserVal = Number(
-        existUserQueryResult[0].existUsers.toString()
-      );
-      if (existUserVal > 0) duplicateUsername = true;
+    const checkEmailPromise = new Promise(async (resolve, reject) => {
+      if (email) {
+        const existEmailQuery = `SELECT COUNT(*) as existEmail FROM ${tableName} WHERE email=?`;
+        const existEmailQueryResult = await pool.query(existEmailQuery, email);
+        const existEmailVal = Number(
+          existEmailQueryResult[0].existEmail.toString()
+        );
+        if (existEmailVal > 0) {
+          resolve({ email: "duplicateEmail" });
+        } else resolve({ email: "available" });
+      } else {
+        resolve({ email: "NO_EMAIL_FOUND" });
+      }
+    });
 
-      const existEmailQuery = `SELECT COUNT(*) as existEmail FROM ${tableName} WHERE email=?`;
-      const existEmailQueryResult = await pool.query(existEmailQuery, email);
-      const existEmailVal = Number(
-        existEmailQueryResult[0].existEmail.toString()
-      );
-      if (existEmailVal > 0) duplicateEmail = true;
-      if (duplicateEmail && duplicateUsername)
-        reject(new Error("DUPLICATE_EMAIL_AND_USERNAME"));
-      else if (duplicateEmail) reject(new Error("DUPLICATE_EMAIL"));
-      else if (duplicateUsername) reject(new Error("DUPLICATE_USERNAME"));
-      resolve();
-    })
-      .then(() => {
-        next();
-      })
-      .catch((err) => {
-        if (err.message === "DUPLICATE_EMAIL_AND_USERNAME")
-          res.status(411).send("Email and username exists");
-        else if (err.message === "DUPLICATE_EMAIL")
-          res.status(410).send("duplicate email exists");
-        else if (err.message === "DUPLICATE_USERNAME")
-          res.status(409).send("duplicate username exists");
-        else res.status(500).send("unknown error");
-      });
+    const checkUsernamePromise = new Promise(async (resolve, reject) => {
+      if (username) {
+        const existUserQuery = `SELECT COUNT(*) as existUsers FROM ${tableName} WHERE username=?`;
+        const existUserQueryResult = await pool.query(existUserQuery, username);
+        const existUserVal = Number(
+          existUserQueryResult[0].existUsers.toString()
+        );
+        if (existUserVal > 0) {
+          resolve({ username: "duplicateUsername" });
+        } else resolve({ username: "available" });
+      } else {
+        resolve({ username: "NO_USERNAME_FOUND" });
+      }
+    });
+    Promise.all([checkEmailPromise, checkUsernamePromise]).then(
+      (resolveObj) => {
+        if (
+          !(resolveObj[0].email === "NO_EMAIL_FOUND") &&
+          !(resolveObj[1].username === "NO_USERNAME_FOUND")
+        ) {
+          if (
+            resolveObj[0].email === "duplicateEmail" &&
+            resolveObj[1].username === "duplicateUsername"
+          ) {
+            res.send({ msg: "DUPLICATE_EMAIL_AND_USERNAME" });
+          } else if (resolveObj[0].email === "duplicateEmail") {
+            res.send({ msg: "DUPLICATE_EMAIL" });
+          } else if (resolveObj[1].username === "duplicateUsername") {
+            res.send({ msg: "DUPLICATE_USERNAME" });
+          } else {
+            next();
+          }
+        } else if (
+          resolveObj[0].email === "NO_EMAIL_FOUND" &&
+          !(resolveObj[1].username === "NO_USERNAME_FOUND")
+        ) {
+          if (resolveObj[1].username === "duplicateUsername")
+            res.send({ msg: "DUPLICATE_USERNAME" });
+          else next();
+        } else if (
+          !(resolveObj[0].email === "NO_EMAIL_FOUND") &&
+          resolveObj[1].username === "NO_USERNAME_FOUND"
+        ) {
+          if (resolveObj[0].email === "duplicateEmail")
+            res.send({ msg: "DUPLICATE_EMAIL" });
+          else next();
+        } else {
+          next();
+        }
+      }
+    );
   } catch (error) {
-    res.status(404).send({ error: error.message });
+    res.status(500).send({ error: error.message });
   } finally {
     if (conn) return conn.release();
   }

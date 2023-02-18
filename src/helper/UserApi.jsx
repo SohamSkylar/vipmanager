@@ -6,15 +6,10 @@ export async function registerUser(userdetails) {
   try {
     const {
       data: { msg },
-      status,
     } = await axios.post(`${BASE_URL}/register`, userdetails);
 
-    // let { username, email } = userdetails;
-    console.log(msg);
-    if (status === 409 || status === 410 || status === 411) {
-      return Promise.reject(status);
-    }
-    return Promise.resolve(msg);
+    if (msg === "success") return Promise.resolve(msg);
+    else return Promise.reject(msg);
   } catch (error) {
     return Promise.reject(error.message);
   }
@@ -109,7 +104,7 @@ export async function updateNewUser(customerdetails) {
     if (msg === "success") return Promise.resolve(msg);
     else return Promise.reject(msg);
   } catch (err) {
-    return Promise.reject({ error: "auth Failed" });
+    return Promise.reject({ error: err.message });
   }
 }
 

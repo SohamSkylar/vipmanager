@@ -131,7 +131,7 @@ const registerUser = async (req, res) => {
             hashedPassword,
           ]);
           console.log(result);
-          res.json({ userid: Number(result.insertId.toString()) });
+          res.json({ msg: "success", userid: Number(result.insertId.toString()) });
         })
         .catch((error) => {
           return res.status(500).send({
