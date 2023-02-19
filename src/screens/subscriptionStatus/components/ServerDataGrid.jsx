@@ -1,40 +1,29 @@
 import React from "react";
 import { BsEmojiSunglassesFill } from "react-icons/bs";
 
-const ServerDataGrid = ({username, servername, duration, subtype}) => {
-
+const ServerDataGrid = ({ username, servername, duration, subtype }) => {
   return (
-    <div className="p-4">
-      <div className=" w-full lg:w-6/12 xl:w-4/12 bg-slate-900">
+    <div className="w-full lg:w-2/4 2xl:w-1/3 px-4 py-2">
+      <div className=" w-full bg-slate-900">
         {/* <div classNameName="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden" title="Mountain">
                 </div> */}
         <div className="bg-slate-900 flex flex-col justify-between leading-normal shadow-lg">
-          <div className="flex-wrap w-full p-1 flow-root mt-1 px-2">
-            <p className="text-sm text-amber-600 flex items-center float-left mt-3 px-1">
-              <svg
-                className="fill-current text-gray-500 w-3 h-3 mr-2"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path d="M4 8V6a6 6 0 1 1 12 0v2h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-8c0-1.1.9-2 2-2h1zm5 6.73V17h2v-2.27a2 2 0 1 0-2 0zM7 6v2h6V6a3 3 0 0 0-6 0z" />
-              </svg>
-              {username}'s VIP status
-            </p>
-
-            <div className="text-sm flow-root mr-0 px-2">
-              <div className="text-white p-3 text-center inline-flex float-right items-center justify-end w-12 h-12 shadow-lg rounded-full bg-red-500">
-                <BsEmojiSunglassesFill className="w-auto h-full" />
+          <div className="flex flex-wrap bg-slate-900">
+            <div className="flex flex-wrap w-full px-4 pt-4 pb-2">
+              <div className="relative w-full pr-4 max-w-full flex-grow flex-1 text-sm text-amber-500">
+                {username}'s subscription status in
+                <h5 className="text-amber-500 uppercase font-semibold text-lg pt-1">
+                  {servername} server
+                </h5>
+                <div className="text-amber-600 text-base">Role: {subtype} </div>
               </div>
-            </div>
-
-            <div className="px-2">
-              <div className="font-bold text-xl mb-2 text-amber-500">
-                Server Name: {servername}
+              <div className="relative w-auto pl-4 flex-initial">
+                <div className="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full bg-red-500">
+                  <BsEmojiSunglassesFill className="w-auto h-full" />
+                </div>
               </div>
-              <div className="text-amber-600 text-base">Role: {subtype} </div>
             </div>
           </div>
-
           <div className="flex-wrap bg-stone-300 justify-center flow-root px-2">
             <p className="text-base font-semibold text-blue-900 float-left py-2">
               {" "}

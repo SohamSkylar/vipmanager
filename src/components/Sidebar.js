@@ -4,6 +4,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { ImCross } from "react-icons/im";
 import NotificationDropdown from "./NotificationDropdown.js";
 import UserDropdown from "./UserDropdown.js";
+import { toast } from "react-hot-toast";
 
 export default function Sidebar({ AuthTypeVal, UserTypeVal }) {
   const deleteToken = () => {
@@ -169,6 +170,7 @@ export default function Sidebar({ AuthTypeVal, UserTypeVal }) {
               ) : null}
 
               <li className="items-center">
+              {toast.dismiss('toastBox')}
                 <NavLink
                   className={({ isActive }) =>
                   isActive ? activeClassName : inActiveClassName

@@ -3,6 +3,7 @@ import { activeUser } from "../../helper/UserApi.jsx";
 import Navbar from "./components/Navbar.js";
 import Sidebar from "../../components/Sidebar.js";
 import TabNavigation from "./components/TabNavigation.jsx";
+import { toast } from "react-hot-toast";
 const AdminSettings = () => {
 
   const [AuthTypeVal, setAuthTypeVal] = useState(false);
@@ -33,6 +34,7 @@ const AdminSettings = () => {
 
   useEffect(() => {
     activeUserFunc()
+    toast.remove();
   });
 
 

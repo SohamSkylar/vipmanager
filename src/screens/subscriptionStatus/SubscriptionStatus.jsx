@@ -81,7 +81,7 @@ const SubscriptionStatus = () => {
           <div className="px-4 md:px-10 mx-auto w-full">
             <div>
               {/* Card stats */}
-              <div>
+              <div className="flex flex-wrap lg:overflow-hidden overflow-scroll serverCardui w-full">
               {statusRenderPermit && displayStatus}
               </div>
             </div>

@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar.js";
 import ServerCard from "./components/ServerCard.jsx";
 import Sidebar from "../../components/Sidebar.js";
 import { showAllServerSub } from "../../helper/SubscriptionApi.jsx";
+import { toast } from "react-hot-toast";
 const Dashboard = () => {
   const [AuthTypeVal, setAuthTypeVal] = useState(false);
   const [isAdmin, setIsAdminVal] = useState(false);
@@ -48,6 +49,7 @@ const Dashboard = () => {
   useEffect(() => {
     activeUserFunc();
     getServerDataFunc();
+    toast.remove();
   },[]);
 
   return (

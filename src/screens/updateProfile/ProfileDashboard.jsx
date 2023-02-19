@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import { activeUser } from "../../helper/UserApi.jsx";
 import Navbar from "./components/Navbar.js";
 import Sidebar from "../../components/Sidebar.js";
-import { showAllServerSub } from "../../helper/SubscriptionApi.jsx";
 import UpdateProfileCard from "./components/UpdateProfileCard.jsx";
+import { toast } from "react-hot-toast";
 const ProfileDashboard = () => {
   const [AuthTypeVal, setAuthTypeVal] = useState(false);
   const [isAdmin, setIsAdminVal] = useState(false);
   const [renderVal, setRenderVal] = useState();
-  const [serverData, setServerData] = useState([]);
 
   const activeUserFunc = () => {
     const activeUserPromise = activeUser();
@@ -30,19 +29,10 @@ const ProfileDashboard = () => {
       });
   };
 
-  const getServerDataFunc = () => {
-    const newPromise = showAllServerSub()
-    newPromise
-      .then((data) => {
-        setServerData(data);
-      })
-      .catch((err) => console.log(err.message));
-  };
-
   useEffect(() => {
     activeUserFunc();
-    getServerDataFunc();
-  },[]);
+    toast.remove();
+  }, []);
 
   return (
     <>
@@ -55,7 +45,7 @@ const ProfileDashboard = () => {
             <div>
               {/* Card stats */}
               <div className=" mx-auto w-full">
-                <UpdateProfileCard/>
+                <UpdateProfileCard />
               </div>
             </div>
           </div>

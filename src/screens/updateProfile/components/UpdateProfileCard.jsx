@@ -106,7 +106,7 @@ const UpdateProfileCard = () => {
       <Toaster position="top-right" reverseOrder={false}></Toaster>
       <form className="space-y-6" onSubmit={formik.handleSubmit}>
         <div className="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
-          <div className="w-2/4 mx-auto justify-center">
+          <div className="w-4/5 sm:w-2/4 mx-auto justify-center">
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Select Update Option
             </label>
@@ -121,11 +121,8 @@ const UpdateProfileCard = () => {
               <option value="steamid">Change Steam Url</option>
             </select>
           </div>
-          <div className="w-2/4 mx-auto justify-center mt-4">
-            <h5 className="text-xl w-full mx-auto text-center font-medium text-gray-900 dark:text-white mb-4">
-              Update Your Account
-            </h5>
-            <div className="w-2/4 mx-auto justify-center mb-4">
+          <div className="w-4/5 sm:w-2/4 mx-auto justify-center mt-4">
+            <div className="w-full lg:w-2/4 mx-auto justify-center mb-4">
               {formik.values.changeValue === "username" && (
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -179,12 +176,12 @@ const UpdateProfileCard = () => {
               </div>
             </div>
             <div className="w-full mx-auto text-center">
-            <button
+            {formik.values.changeValue !== "" && (<button
               type="submit"
-              className="w-2/4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className="w-full lg:w-2/4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Update
-            </button>
+            </button>)}
             </div>
             
           </div>
