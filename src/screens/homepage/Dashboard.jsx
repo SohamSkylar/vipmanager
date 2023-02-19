@@ -14,11 +14,12 @@ const Dashboard = () => {
   const activeUserFunc = () => {
     const activeUserPromise = activeUser();
     activeUserPromise
-      .then((type) => {
-        if (type === "admin") {
+      .then((data) => {
+        // console.log(data)
+        if (data.type === "admin") {
           setAuthTypeVal(true);
           setIsAdminVal(true);
-        } else if (type === "customer") {
+        } else if (data.type === "customer") {
           setAuthTypeVal(true);
         }
       })

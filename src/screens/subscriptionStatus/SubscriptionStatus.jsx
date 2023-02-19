@@ -13,17 +13,20 @@ const SubscriptionStatus = () => {
   const [isAdmin, setIsAdminVal] = useState(false);
   const [renderVal, setRenderVal] = useState();
   const [customerData, setCustomerData] = useState([]);
+  const [customerUsername, setCustomerUsername] = useState();
   const [statusRenderPermit, setStatusRenderPermit] = useState();
 
   const activeUserFunc = () => {
     const activeUserPromise = activeUser();
     activeUserPromise
-      .then((type) => {
-        if (type === "admin") {
+      .then((data) => {
+        // console.log(data)
+        if (data.type === "admin") {
           setAuthTypeVal(true);
           setIsAdminVal(true);
-        } else if (type === "customer") {
+        } else if (data.type === "customer") {
           setAuthTypeVal(true);
+          setCustomerUsername(data.username)
         }
       })
       .then(() => {
@@ -44,7 +47,7 @@ const SubscriptionStatus = () => {
         if(data.msg === "NO_DATA") setStatusRenderPermit(false)
         else{
           setCustomerData(data);
-          console.log(data.msg);
+          // console.log(data.msg);
           setStatusRenderPermit(true)
         }
       })
@@ -53,7 +56,7 @@ const SubscriptionStatus = () => {
 
   const displayStatus = customerData.map((index, id) => {
     return (
-      <ServerDataGrid key={id} servername={index.servername} username={index.username} duration={index.duration} subtype={index.subtype} />
+      <ServerDataGrid key={id} servername={index.servername} username={customerUsername} duration={index.duration} subtype={index.subtype} />
     );
   });
 
@@ -67,7 +70,6 @@ const SubscriptionStatus = () => {
         })
         .catch((err) => console.log(err.message));
     };
-
     activeCustomerFunc();
   }, []);
 

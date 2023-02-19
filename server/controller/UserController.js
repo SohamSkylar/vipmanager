@@ -43,6 +43,26 @@ const getSpecificUser = async (req, res) => {
     if (conn) return conn.release();
   }
 };
+
+const getSpecificUserID = async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    console.log("db is active");
+    const sqlQuery = `SELECT id FROM ${tableName} WHERE username=?`;
+    let result = await pool.query(sqlQuery, req.params.username);
+    const row = JSON.parse(JSON.stringify(result));
+    if (result.length === 0) {
+      res.send({ msg: "NO_USER_FOUND" });
+    } else {
+      res.json({ msg: "success", userid: row[0].id });
+    }
+  } catch (err) {
+    res.send("Invalid Username");
+  } finally {
+    if (conn) return conn.release();
+  }
+};
 //   let conn;
 //   try {
 //     conn = await pool.getConnection();
@@ -131,7 +151,10 @@ const registerUser = async (req, res) => {
             hashedPassword,
           ]);
           console.log(result);
-          res.json({ msg: "success", userid: Number(result.insertId.toString()) });
+          res.json({
+            msg: "success",
+            userid: Number(result.insertId.toString()),
+          });
         })
         .catch((error) => {
           return res.status(500).send({
@@ -355,9 +378,11 @@ const resetPassword = async (req, res) => {
 
 const activeUser = async (req, res) => {
   const userType = req.type;
+  const username = req.user.username;
   if (userType === "admin") {
     res.status(201).json({ msg: "active", type: "admin" });
-  } else res.status(201).json({ msg: "active", type: "customer" });
+  } else
+    res.status(201).json({ msg: "active", type: "customer", username: username });
 };
 
 const checkSteamID = async (req, res) => {
@@ -377,7 +402,11 @@ const checkSteamID = async (req, res) => {
           // console.log(details);
           let newSteamID = BigInt(details.steamID.accountid);
           let steamID = `STEAM_1:${newSteamID % 2n}:${newSteamID / 2n}`;
-          res.send({ steamid: steamID, profilename: details.name, msg: "success" });
+          res.send({
+            steamid: steamID,
+            profilename: details.name,
+            msg: "success",
+          });
         }
       });
     } else {
@@ -426,4 +455,5 @@ module.exports = {
   loginAdmin,
   addAdmin,
   checkSteamID,
+  getSpecificUserID,
 };

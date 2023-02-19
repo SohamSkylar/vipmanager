@@ -11,11 +11,11 @@ const createCustomerTable = async (req, res) => {
 
     if (UserSubtableName) {
       const sqlQuery = `CREATE TABLE IF NOT EXISTS ${correctedName} (
-          username VARCHAR(45) NOT NULL,
+          userid VARCHAR(45) NOT NULL,
           subtype VARCHAR(45) NOT NULL,
           duration INT(45) NOT NULL,
           created_at DATETIME DEFAULT NOW(),
-          CONSTRAINT customer_pk PRIMARY KEY (username, subtype))
+          CONSTRAINT customer_pk PRIMARY KEY (userid, subtype))
         ENGINE = InnoDB`;
       const result = await pool.query(sqlQuery);
       console.log(result);
@@ -36,13 +36,13 @@ const addNewCustomer = async (req, res) => {
     conn = await pool.getConnection();
     console.log("register user api activated");
     let servername = req.body.servername;
-    let username = req.body.username;
+    let userid = req.body.userid;
     let duration = req.body.duration;
     let subtype = req.body.subtype;
 
-    if (subtype || servername || duration || username) {
-      const sqlQuery = `INSERT INTO ${servername} (username, subtype, duration) VALUES(?,?,?)`;
-      const result = await pool.query(sqlQuery, [username, subtype, duration]);
+    if (subtype || servername || duration || userid) {
+      const sqlQuery = `INSERT INTO ${servername} (userid, subtype, duration) VALUES(?,?,?)`;
+      const result = await pool.query(sqlQuery, [userid, subtype, duration]);
       console.log(result);
       res.status(201).send({
         msg: "success",
@@ -62,24 +62,27 @@ const getCustomerData = async (req, res) => {
     conn = await pool.getConnection();
     console.log("getCustomerData is active");
     const tableName = req.tableName;
-    let conditionVar = []
-    for(let i = 0; i<tableName.length; i++){
-      conditionVar[i] = `SELECT *,"${tableName[i]}" as servername  FROM ${tableName[i]} WHERE username="${req.params.username}"`
+    if (tableName.length === 0) res.send({ msg: "NO_DATA" });
+    else {
+      let conditionVar = [];
+      for (let i = 0; i < tableName.length; i++) {
+        conditionVar[i] = `SELECT *,"${tableName[i]}" as servername  FROM ${tableName[i]} WHERE userid="${req.params.userid}"`;
+      }
+      const sqlQuery = conditionVar.join(" UNION ");
+      // console.log(conditionString)
+      // console.log(tableName)
+      let result = await pool.query(sqlQuery, req.params.userid);
+      if (result.length === 0) {
+        res.send({ msg: "NO_DATA" });
+      } else {
+        res.json(result);
+      }
+      // res.json(result);
+      // console.log(tableName)
+      // res.send('ok')
     }
-    const sqlQuery = conditionVar.join(' UNION ')
-    // console.log(conditionString)
-    // console.log(tableName)
-    let result = await pool.query(sqlQuery, req.params.username);
-    if (result.length === 0) {
-      res.send({msg: "NO_DATA"});
-    } else {
-      res.json(result);
-    }
-    // res.json(result);
-    // console.log(tableName)
-    // res.send('ok')
   } catch (err) {
-    res.send({msg: "Invalid Username", err: err.message});
+    res.send({ msg: "Invalid Username", err: err.message });
   } finally {
     if (conn) return conn.release();
   }
@@ -101,9 +104,9 @@ const showAllCustomers = async (req, res) => {
 };
 
 const activeCustomer = async (req, res) => {
-  const username = req.user.username;
-  if (username) res.status(201).json({ msg: username });
-  else res.status(201).json({ msg: "NO_USERNAME_FOUND" });
+  const userid = req.user.userid;
+  if (userid) res.status(201).json({ userid: userid, msg: "success" });
+  else res.status(201).json({ msg: "NO_USER_FOUND" });
 };
 
 module.exports = {

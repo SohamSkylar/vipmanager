@@ -4,6 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { showAllServers } from "../../../helper/ServerApi";
 import { showAllSub } from "../../../helper/SubscriptionApi";
 import { addNewCustomer } from "../../../helper/CustomerApi";
+import { getUserID } from "../../../helper/UserApi";
 
 const AddCustomer = () => {
   const [serverNames, setServerNames] = useState([]);
@@ -37,39 +38,61 @@ const AddCustomer = () => {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
-      console.log(values)
+      // console.log(values);
       let toastBox = toast.loading("Loading...");
-      const addNewCustomerPromise = addNewCustomer(values)
-      addNewCustomerPromise
+      const getUserIDPromise = getUserID(values.username);
+      getUserIDPromise
         .then(
-          (resolve) => {
-            toast.success("Server Subscription Added", {
-              id: toastBox,
-            });
+          (userid) => {
+            const newSendObj = {
+              servername: values.servername,
+              userid: userid,
+              duration: values.duration,
+              subtype: values.subtype,
+            };
+            return Promise.resolve(newSendObj);
           },
-          (detail) => {
-            if (detail === "EMPTY_SUB") {
-              toast.error("Fill All Fields", {
-                id: toastBox,
-              });
-            } else if(detail === "NO_USER_AVAILABLE"){
+          (reason) => {
+            if (reason === "NO_USER_FOUND") {
               toast.error("Invalid Username", {
                 id: toastBox,
               });
-            } else if(detail === "DUPLICATE_ENTRY"){
-              toast.error("User already has this subscription", {
-                id: toastBox,
-              });
             }
-             else {
-              toast.error("Some error occured", {
-                id: toastBox,
-              });
-            }
+            return Promise.reject("no user found");
           }
         )
+        .then((newValues) => {
+          const addNewCustomerPromise = addNewCustomer(newValues);
+
+          addNewCustomerPromise.then(
+            (resolve) => {
+              toast.success("Server Subscription Added", {
+                id: toastBox,
+              });
+            },
+            (detail) => {
+              if (detail === "EMPTY_SUB") {
+                toast.error("Fill All Fields", {
+                  id: toastBox,
+                });
+              } else if (detail === "NO_USER_AVAILABLE") {
+                toast.error("Invalid Username", {
+                  id: toastBox,
+                });
+              } else if (detail === "DUPLICATE_ENTRY") {
+                toast.error("User already has this subscription", {
+                  id: toastBox,
+                });
+              } else {
+                toast.error(`${detail}`, {
+                  id: toastBox,
+                });
+              }
+            }
+          );
+        })
         .catch((err) => {
-          console.log(err.message);
+          console.log(err);
         });
     },
   });

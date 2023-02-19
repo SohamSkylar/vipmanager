@@ -12,7 +12,6 @@ const auth = async (req, res, next) => {
     const decodedToken = await jwt.verify(token, ENV.JWT_SECRET);
     req.user = decodedToken;
     req.type = decodedToken.usertype;
-    console.log(decodedToken);
     next();
   } catch (error) {
     res.status(202).send({ msg: "AUTH_FAILED" });

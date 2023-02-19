@@ -75,11 +75,11 @@ export async function activeUser() {
   try {
     const userToken = await localStorage.getItem("token");
     const {
-      data: { type },
+      data: { msg, type, username },
     } = await axios.get(`${BASE_URL}/auth`, {
       headers: { Authorization: `Bearer ${userToken}` },
     });
-    return Promise.resolve(type);
+      return Promise.resolve({ type: type, username: username });
   } catch (err) {
     return Promise.reject({ error: "Auth Failed" });
   }
@@ -102,7 +102,7 @@ export async function checkSteamID(userdetails) {
       return Promise.resolve(fetchedDetails);
     } else return Promise.reject(msg);
   } catch (err) {
-    return Promise.reject({msg: err.message});
+    return Promise.reject({ msg: err.message });
   }
 }
 
@@ -113,28 +113,40 @@ export async function updateNewUser(customerdetails) {
     },
   };
   var newdetails;
-    if (customerdetails.changeValue === "username") {
-      newdetails = {
-        username: customerdetails.username,
-      };
-    } else if (customerdetails.changeValue === "email") {
-      newdetails = {
-        email: customerdetails.email,
-      };
-    } else if (customerdetails.changeValue === "steamid") {
-      newdetails = {
-        steamid: customerdetails.steamid,
-      };
-    }
-    try {
-      const {
-        data: { msg },
-      } = await axios.patch(`${BASE_URL}/update`, newdetails, config);
-      if (msg === "success") return Promise.resolve(msg);
-      else return Promise.reject(msg);
-    } catch (err) {
-      return Promise.reject({ error: err.message });
-    }
+  if (customerdetails.changeValue === "username") {
+    newdetails = {
+      username: customerdetails.username,
+    };
+  } else if (customerdetails.changeValue === "email") {
+    newdetails = {
+      email: customerdetails.email,
+    };
+  } else if (customerdetails.changeValue === "steamid") {
+    newdetails = {
+      steamid: customerdetails.steamid,
+    };
+  }
+  try {
+    const {
+      data: { msg },
+    } = await axios.patch(`${BASE_URL}/update`, newdetails, config);
+    if (msg === "success") return Promise.resolve(msg);
+    else return Promise.reject(msg);
+  } catch (err) {
+    return Promise.reject({ error: err.message });
+  }
+}
+
+export async function getUserID(username) {
+  try {
+    const {
+      data: { msg, userid },
+    } = await axios.get(`${BASE_URL}/userid/${username}`);
+    if (msg === "success") return Promise.resolve(userid);
+    else return Promise.reject(msg);
+  } catch (err) {
+    return Promise.reject(err.message);
+  }
 }
 
 // export async function generateOTP(username){

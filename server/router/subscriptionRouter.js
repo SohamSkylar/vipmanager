@@ -29,7 +29,8 @@ subscriptionRouter.get("/serversub", showAllServerSub);
 subscriptionRouter.get("/customer", showAllCustomers);
 // subscriptionRouter.get("/customer/id", getCustomerData);
 subscriptionRouter.get("/customer/auth", authCustomer, activeCustomer);
-subscriptionRouter.get("/customer/id/:username", getAllCustomerTables, getCustomerData);
+subscriptionRouter.get("/customer/id/:userid", getAllCustomerTables, getCustomerData);
+subscriptionRouter.get("/customer/username/:username", getAllCustomerTables, getCustomerData);
 
 //post
 subscriptionRouter.post("/add", checkDuplicateSubscription, addNewSubscription);
