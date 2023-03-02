@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar.js";
 import Sidebar from "../../components/Sidebar.js";
 import UpdateProfileCard from "./components/UpdateProfileCard.jsx";
 import { toast } from "react-hot-toast";
+import CurrentUserCard from "./components/CurrentUserCard.jsx";
 const ProfileDashboard = () => {
   const [AuthTypeVal, setAuthTypeVal] = useState(false);
   const [isAdmin, setIsAdminVal] = useState(false);
@@ -45,6 +46,7 @@ const ProfileDashboard = () => {
             <div>
               {/* Card stats */}
               <div className=" mx-auto w-full">
+                <CurrentUserCard/><br/><br/>
                 <UpdateProfileCard />
               </div>
             </div>

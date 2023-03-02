@@ -105,7 +105,7 @@ const UpdateProfileCard = () => {
     <>
       <Toaster position="top-right" reverseOrder={false}></Toaster>
       <form className="space-y-6" onSubmit={formik.handleSubmit}>
-        <div className="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+        <div className="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-slate-900 dark:border-gray-700">
           <div className="w-4/5 sm:w-2/4 mx-auto justify-center">
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Select Update Option
