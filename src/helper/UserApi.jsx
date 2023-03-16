@@ -163,13 +163,15 @@ export async function getUserID(username) {
 //   }
 // }
 
-// export async function getUser({ username }){
-//   try{
-//     const {data} = await axios.get(`http://localhost:8001/api/user${username}`)
-//     return data;
+export async function getSpecificUser(username){
+  try{
+    const {data: {msg, result}} = await axios.get(`http://localhost:8001/api/user/${username}`)
+    if(msg==="success")
+      return Promise.resolve({steamid: result[0].steamid, email: result[0].email});
+    else
+      return Promise.reject(msg);
 
-//   }catch(error){
-//     return {error:"Password Doesnt Match.."}
-// }
-
-// }
+  }catch(error){
+    return {error:"Password Doesnt Match.."}
+  }
+}
