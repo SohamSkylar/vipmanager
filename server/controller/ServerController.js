@@ -1,45 +1,51 @@
-const pool = require("../database/conn");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const ENV = require("../config.js");
+const mysqlPool = require("../database/mysqlConnection");
 
 const tableName = "serverlist";
 
 const showAllServers = async (req, res) => {
-  let conn;
-  try {
-    conn = await pool.getConnection();
-    const sqlQuery = `SELECT * FROM ${tableName}`;
-    const result = await conn.query(sqlQuery);
-    res.json(result);
-  } catch (err) {
-    res.send(err.message);
-  } finally {
-    if (conn) return conn.release();
-  }
+  mysqlPool.getConnection((err, connection) => {
+    if (err) return res.send(err.message);
+    else if (connection) {
+      const sqlQuery = `SELECT * FROM ${tableName}`;
+      connection.query(sqlQuery, (err, result) => {
+        if (err) return res.send({ msg: err.message });
+        else if (result) {
+          return res.json(result);
+        }
+      });
+    }
+    connection.release();
+  });
 };
 
 const addNewServer = async (req, res) => {
-  let conn;
-  try {
-    conn = await pool.getConnection();
-    console.log("register user api activated");
-    let name = req.body.name;
-    let ip = req.body.ip;
-    let port = req.body.port;
-    let rcon = req.body.rcon;
+  mysqlPool.getConnection((err, connection) => {
+    if (err) return res.send({ msg: err.message });
+    else if (connection) {
+      console.log("add new server api activated");
+      let name = req.body.name;
+      let ip = req.body.ip;
+      let port = req.body.port;
+      let rcon = req.body.rcon;
 
-    if (rcon) {
-      const sqlQuery = `INSERT INTO ${tableName} (name, ip, port, rcon) VALUES(?,?,?,?)`;
-      const result = await pool.query(sqlQuery, [name, ip, port, rcon]);
-      console.log(result);
-      res.status(201).send({ msg: "success", serverid: Number(result.insertId.toString()) });
+      if (rcon) {
+        const sqlQuery = `INSERT INTO ${tableName} (name, ip, port, rcon) VALUES(?,?,?,?)`;
+        connection.query(sqlQuery, [name, ip, port, rcon], (err, result) => {
+          if (err) return res.send({ msg: err.message });
+          else if (result) {
+            return res.status(201).send({
+              msg: "success",
+              serverid: Number(result.insertId.toString()),
+            });
+          }
+        });
+      }
     }
-  } catch (err) {
-    res.send(err.message);
-  } finally {
-    if (conn) return conn.release();
-  }
+    connection.release();
+  });
 };
 
 module.exports = { showAllServers, addNewServer };
