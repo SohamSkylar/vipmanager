@@ -46,7 +46,8 @@ const UpdateProfileCard = () => {
                     toast.success("Update Successful", {
                       id: toastBox,
                     });
-                  }
+                    window.location.reload();
+                  }  
                 },
                 (reject) => {
                   if (reject === "AUTH_FAILED") {
@@ -79,6 +80,7 @@ const UpdateProfileCard = () => {
                 toast.success("Update Successful", {
                   id: toastBox,
                 });
+                window.location.reload();
               }
             },
             (reject) => {

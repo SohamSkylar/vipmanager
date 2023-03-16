@@ -3,7 +3,7 @@ import { BsEmojiSunglassesFill } from "react-icons/bs";
 
 const CurrentUserCard = ({username, email, steamid}) => {
   return (
-    <div className="w-full p-4 bg-white border border-gray-200 rounded-lg 2xl:w-1/3 shadow sm:p-6 md:p-8 dark:bg-slate-900 dark:border-gray-700">
+    <div className="w-full p-4 bg-white border border-gray-200 rounded-lg  shadow sm:p-6 md:p-8 dark:bg-slate-900 dark:border-gray-700">
       <div className=" w-full bg-slate-900">
         {/* <div classNameName="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden" title="Mountain">
                 </div> */}
