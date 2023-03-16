@@ -34,7 +34,7 @@ const getSpecificUser = async (req, res) => {
           if (result.length === 0) {
             res.send("No user found...");
           } else {
-            res.json(result);
+            res.send({msg: "success", result});
           }
         }
       });
@@ -351,6 +351,7 @@ const activeUser = async (req, res) => {
       .status(201)
       .json({ msg: "active", type: "customer", username: username });
 };
+
 
 const checkSteamID = async (req, res) => {
   try {
