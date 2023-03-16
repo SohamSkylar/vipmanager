@@ -29,10 +29,10 @@ const getSpecificUser = async (req, res) => {
       console.log("db is active");
       const sqlQuery = `SELECT * FROM ${tableName} WHERE username=?`;
       connection.query(sqlQuery, req.params.username, (err, result) => {
-        if (err) return res.send("Invalid Username");
+        if (err) return res.send({msg: "Invalid Username"});
         else if (result) {
           if (result.length === 0) {
-            res.send("No user found...");
+            res.send({msg: "No user found..."});
           } else {
             res.send({msg: "success", result});
           }

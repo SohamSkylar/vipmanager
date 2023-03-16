@@ -14,15 +14,19 @@ const ProfileDashboard = () => {
   const [userEmail, setUserEmail] = useState();
   const [userSteamID, setUserSteamID] = useState();
 
-  const userDetailsFunc = () =>{
-    const userDetailsPromise =  getSpecificUser(userName)
-    userDetailsPromise.then((data)=>{
-      setUserEmail(data.email)
-      setUserSteamID(data.steamid)
-    }, (msg)=>{console.log(msg)})
-  }
-
   useEffect(() => {
+    const userDetailsFunc = () =>{
+      const userDetailsPromise =  getSpecificUser(userName)
+      userDetailsPromise.then((data)=>{
+        setUserEmail(data.email)
+        setUserSteamID(data.steamid)
+      }, 
+      (msg)=>{
+        // console.log(msg)
+      }
+      )
+    }
+
     const activeUserFunc = () => {
       const activeUserPromise = activeUser();
       activeUserPromise
