@@ -71,6 +71,19 @@ export async function updateUser(response) {
   }
 }
 
+export async function updatePassword(passwordDetails) {
+  try {
+    const token = await localStorage.getItem("token");
+    const {data: {msg}} = await axios.patch(`${BASE_URL}/update/pass`, passwordDetails, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (msg === 'success') return Promise.resolve()
+    else return Promise.reject(msg);
+  } catch (error) {
+    return Promise.reject("Couldn't Update User...");
+  }
+}
+
 export async function activeUser() {
   try {
     const userToken = await localStorage.getItem("token");

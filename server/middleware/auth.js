@@ -1,5 +1,6 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const ENV = require("../config.js");
 const otpGenerator = require("otp-generator");
 const mysqlPool = require("../database/mysqlConnection");
@@ -16,6 +17,31 @@ const auth = async (req, res, next) => {
   } catch (error) {
     res.status(202).send({ msg: "AUTH_FAILED" });
   }
+};
+
+const verifyPassword = async (req, res, next) => {
+  mysqlPool.getConnection((err, connection) => {
+    if (err) return res.send({ msg: err.message });
+    else if (connection) {
+      const currentpass = req.body.currentpass;
+      const userid = req.user.userid;
+      const sqlQuery = `Select * from ${tableName} where id=?`;
+      connection.query(sqlQuery, userid, async (err, result) => {
+        if (err) return res.send({ msg: err.message });
+        else if (result) {
+          const row = JSON.parse(JSON.stringify(result));
+          const encryptpass = row[0].password;
+          await bcrypt.compare(currentpass, encryptpass).then((passwordCheck) => {
+              if (!passwordCheck) return res.send({ msg: "Wrong Current Password" });
+              next();
+            }).catch((err) => {
+              return res.send({msg: err.message})
+            })
+        }
+      });
+    }
+    connection.release();
+  });
 };
 
 const localVariables = async (req, res, next) => {
@@ -189,4 +215,5 @@ module.exports = {
   verifyUser,
   checkDuplicateUser,
   checkDuplicateAdmin,
+  verifyPassword,
 };

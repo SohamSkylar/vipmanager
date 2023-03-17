@@ -7,29 +7,31 @@ import { addNewCustomer } from "../../../helper/CustomerApi";
 import { getUserID } from "../../../helper/UserApi";
 
 const EditCustomer = () => {
-//   const getServerDataFunc = () => {
-//     const newPromise = showAllServers();
-//     newPromise
-//       .then((data) => {
-//         setServerNames(data);
-//       })
-//       .catch((err) => console.log(err.message));
-//   };
+  //   const getServerDataFunc = () => {
+  //     const newPromise = showAllServers();
+  //     newPromise
+  //       .then((data) => {
+  //         setServerNames(data);
+  //       })
+  //       .catch((err) => console.log(err.message));
+  //   };
 
-//   const getSubDataFunc = () => {
-//     const newPromise = showAllSub();
-//     newPromise
-//       .then((data) => {
-//         setSubNames(data);
-//       })
-//       .catch((err) => console.log(err.message));
-//   };
+  //   const getSubDataFunc = () => {
+  //     const newPromise = showAllSub();
+  //     newPromise
+  //       .then((data) => {
+  //         setSubNames(data);
+  //       })
+  //       .catch((err) => console.log(err.message));
+  //   };
 
   const formik = useFormik({
     initialValues: {
-      customerdetail: "",
+      customerdetailtype: "",
       subscription: "",
       duration: "",
+      username: "",
+      steamurl: "",
     },
     validateOnBlur: false,
     validateOnChange: false,
@@ -37,7 +39,11 @@ const EditCustomer = () => {
       //console.log(values);
       let toastBox = toast.loading("Loading...");
 
-      if (values.customerdetail === "" || values.subscription === "" || values.duration === "") {
+      if (
+        values.customerdetailtype === "" ||
+        values.subscription === "" ||
+        values.duration === ""
+      ) {
         toast.error(`Enter all details`, {
           id: toastBox,
         });
@@ -131,10 +137,10 @@ const EditCustomer = () => {
     },
   });
 
-//   useEffect(() => {
-//     getServerDataFunc();
-//     getSubDataFunc();
-//   }, []);
+  //   useEffect(() => {
+  //     getServerDataFunc();
+  //     getSubDataFunc();
+  //   }, []);
 
   return (
     <>
@@ -149,7 +155,7 @@ const EditCustomer = () => {
             <select
               id="tabs"
               //value={serverSelected}
-              {...formik.getFieldProps("customerdetail")}
+              {...formik.getFieldProps("customerdetailtype")}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               <option value="">Select :</option>
@@ -157,6 +163,38 @@ const EditCustomer = () => {
               <option value="steamurl">Enter SteamURL</option>
             </select>
           </div>
+          {formik.values.customerdetailtype === "username" && (
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Enter Username :
+              </label>
+              <input
+                type="text"
+                name="username"
+                {...formik.getFieldProps("username")}
+                id="username"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Enter username"
+                required
+              />
+            </div>
+          )}
+          {formik.values.customerdetailtype === "steamurl" && (
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Enter Steam URL :
+              </label>
+              <input
+                type="text"
+                name="steamurl"
+                {...formik.getFieldProps("steamurl")}
+                id="steamurl"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="https://steamcommunity.com/id/example"
+                required
+              />
+            </div>
+          )}
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Select Existing Subscription

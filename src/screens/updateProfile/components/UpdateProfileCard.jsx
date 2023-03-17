@@ -1,7 +1,11 @@
 import { useFormik } from "formik";
 import React from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { checkSteamID, updateNewUser } from "../../../helper/UserApi";
+import {
+  checkSteamID,
+  updateNewUser,
+  updatePassword,
+} from "../../../helper/UserApi";
 
 const UpdateProfileCard = () => {
   const formik = useFormik({
@@ -10,6 +14,8 @@ const UpdateProfileCard = () => {
       username: "",
       email: "",
       steamid: "",
+      currentpass: "",
+      newpass: "",
     },
     validateOnBlur: false,
     validateOnChange: false,
@@ -47,7 +53,7 @@ const UpdateProfileCard = () => {
                       id: toastBox,
                     });
                     window.location.reload();
-                  }  
+                  }
                 },
                 (reject) => {
                   if (reject === "AUTH_FAILED") {
@@ -68,6 +74,26 @@ const UpdateProfileCard = () => {
           })
           .catch((err) => {
             toast.error(`${err.message}`, {
+              id: toastBox,
+            });
+          });
+      } else if (values.changeValue === "password") {
+        const updatePasswordPromise = updatePassword(values);
+        updatePasswordPromise
+          .then(
+            () => {
+              toast.success("Password Changed!", {
+                id: toastBox,
+              });
+            },
+            (msg) => {
+              toast.error(`${msg}`, {
+                id: toastBox,
+              });
+            }
+          )
+          .catch((error) => {
+            toast.error(`${error.message}`, {
               id: toastBox,
             });
           });
@@ -97,7 +123,9 @@ const UpdateProfileCard = () => {
             }
           )
           .catch((error) => {
-            console.log(error);
+            toast.error(`${error.message}`, {
+              id: toastBox,
+            });
           });
       }
     },
@@ -121,6 +149,7 @@ const UpdateProfileCard = () => {
               <option value="username">Change Username</option>
               <option value="email">Change Email</option>
               <option value="steamid">Change Steam Url</option>
+              <option value="password">Change Password</option>
             </select>
           </div>
           <div className="w-4/5 sm:w-2/4 mx-auto justify-center mt-4">
@@ -173,19 +202,52 @@ const UpdateProfileCard = () => {
                   />
                 </div>
               )}
+              {formik.values.changeValue === "password" && (
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    Current Password :
+                  </label>
+                  <input
+                    type="password"
+                    name="currentpass"
+                    {...formik.getFieldProps("currentpass")}
+                    id="currentpass"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    placeholder="Enter current password"
+                    required
+                  />
+                </div>
+              )}
+              {formik.values.changeValue === "password" && (
+                <div>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    New Password :
+                  </label>
+                  <input
+                    type="password"
+                    name="newpass"
+                    {...formik.getFieldProps("newpass")}
+                    id="newpass"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    placeholder="Enter new password"
+                    required
+                  />
+                </div>
+              )}
               <div className="flex items-start">
                 <div className="flex items-start"></div>
               </div>
             </div>
             <div className="w-full mx-auto text-center">
-            {formik.values.changeValue !== "" && (<button
-              type="submit"
-              className="w-full lg:w-2/4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-              Update
-            </button>)}
+              {formik.values.changeValue !== "" && (
+                <button
+                  type="submit"
+                  className="w-full lg:w-2/4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  Update
+                </button>
+              )}
             </div>
-            
           </div>
         </div>
       </form>

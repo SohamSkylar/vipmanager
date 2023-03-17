@@ -5,6 +5,7 @@ const {
   auth,
   checkDuplicateUser,
   checkDuplicateAdmin,
+  verifyPassword,
 } = require("../middleware/auth.js");
 
 const {
@@ -19,6 +20,7 @@ const {
   addAdmin,
   checkSteamID,
   getSpecificUserID,
+  changePassword,
 } = require("../controller/UserController");
 const { generateOTP, verifyOTP } = require("../controller/OTPController.js");
 
@@ -30,10 +32,11 @@ userRouter.get("/user/:username", getSpecificUser);
 userRouter.get("/generateOTP", verifyUser, localVariables, generateOTP);
 userRouter.get("/verifyOTP", verifyOTP);
 userRouter.get("/auth", auth, activeUser);
-userRouter.get("/userid/:username", getSpecificUserID)
+userRouter.get("/userid/:username", getSpecificUserID);
 
 //Patch method
 userRouter.patch("/update", auth, checkDuplicateUser, updateUser);
+userRouter.patch("/update/pass", auth, verifyPassword, changePassword);
 
 //put method
 userRouter.put("/resetPassword", verifyUser, resetPassword);

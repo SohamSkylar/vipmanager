@@ -29,12 +29,12 @@ const getSpecificUser = async (req, res) => {
       console.log("db is active");
       const sqlQuery = `SELECT * FROM ${tableName} WHERE username=?`;
       connection.query(sqlQuery, req.params.username, (err, result) => {
-        if (err) return res.send({msg: "Invalid Username"});
+        if (err) return res.send({ msg: "Invalid Username" });
         else if (result) {
           if (result.length === 0) {
-            res.send({msg: "No user found..."});
+            res.send({ msg: "No user found..." });
           } else {
-            res.send({msg: "success", result});
+            res.send({ msg: "success", result });
           }
         }
       });
@@ -279,6 +279,33 @@ const updateUser = async (req, res) => {
   });
 };
 
+const changePassword = async (req, res) => {
+  mysqlPool.getConnection((err, connection) => {
+    if (err) return res.send({ msg: err.message });
+    else if (connection) {
+      const newpass = req.body.newpass;
+      const userid = req.user.userid;
+      bcrypt
+        .hash(newpass, 10)
+        .then(async (hashedPassword) => {
+          const sqlQuery = `UPDATE ${tableName} SET password=? where id=?`;
+          connection.query(sqlQuery, [hashedPassword, userid], (err, result) => {
+            if (err) return res.status(500).send({ msg: err.message });
+            else if (result) {
+              res.send({ msg: "success" });
+            }
+          });
+        })
+        .catch((error) => {
+          return res.status(500).send({
+            msg: error.message,
+          });
+        });
+      connection.release();
+    }
+  });
+};
+
 const resetPassword = async (req, res) => {
   // let conn;
   // if (!req.app.locals.resetSession) return res.json({ msg: "OTP_EXPIRED" });
@@ -352,7 +379,6 @@ const activeUser = async (req, res) => {
       .json({ msg: "active", type: "customer", username: username });
 };
 
-
 const checkSteamID = async (req, res) => {
   try {
     let steamidurl = req.body.steamid;
@@ -424,4 +450,5 @@ module.exports = {
   addAdmin,
   checkSteamID,
   getSpecificUserID,
+  changePassword,
 };
