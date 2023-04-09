@@ -1,6 +1,9 @@
 import React from "react";
 import "./App.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
 import Login from "./components/Login.jsx";
 import Recovery from "./components/Recovery.jsx";
 import Reset from "./components/Reset.jsx";
@@ -10,6 +13,7 @@ import Dashboard from "./screens/homepage/Dashboard";
 import AdminSettings from "./screens/adminSettings/AdminSettings";
 import SubscriptionStatus from "./screens/subscriptionStatus/SubscriptionStatus";
 import ProfileDashboard from "./screens/updateProfile/ProfileDashboard";
+import StripeGateway from "./paymentGateways/stripe/StripeGateway";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +23,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },  
+  {
+    path: "/stripe",
+    element: <StripeGateway />,
   },
   {
     path: "/newadmin",

@@ -1,8 +1,7 @@
 CREATE TABLE IF NOT EXISTS `serverlist` (
-  `id` INT(10) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `ip` VARCHAR(45) NOT NULL,
   `port` VARCHAR(45) NOT NULL,
   `rcon` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`name`))
 ENGINE = InnoDB;

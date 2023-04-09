@@ -34,7 +34,7 @@ const Register = (props) => {
       values = await Object.assign(values, { profilePic: file || "" });
 
       if(props.type === "adminRegister") var registerPromise = registerAdmin(values)
-      else var registerPromise = registerUser(values);
+      else registerPromise = registerUser(values);
 
       registerPromise
         .then(

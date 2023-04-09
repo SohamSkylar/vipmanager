@@ -8,6 +8,7 @@ const path = require("path");
 const serverRouter = require("./router/serverRouter");
 const subscriptionRouter = require("./router/subscriptionRouter");
 const mysqlPool = require("./database/mysqlConnection");
+const paymentRouter = require("./router/paymentRouter");
 
 const PORT = process.env.PORT;
 
@@ -30,6 +31,7 @@ app.get("/", (req, res) => {
 app.use("/api", userRouter);
 app.use("/api/server", serverRouter);
 app.use("/api/subs", subscriptionRouter);
+app.use("/api/payments", paymentRouter);
 
 app.listen(PORT, () => {
   console.log(`server running on http://localhost:${PORT}`);
