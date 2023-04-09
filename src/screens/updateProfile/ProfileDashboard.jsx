@@ -65,6 +65,8 @@ const ProfileDashboard = () => {
               {/* Card stats */}
               <div className=" mx-auto w-full">
                 <CurrentUserCard username = {userName} email = {userEmail} steamid= {userSteamID}/><br/><br/>
+                <CurrentUserCard/><br/><br/>
+
                 <UpdateProfileCard />
               </div>
             </div>
