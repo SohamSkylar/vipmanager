@@ -14,7 +14,7 @@ export default function Navbar() {
             href="#pablo"
             onClick={e => e.preventDefault()}
           >
-            Dashboard
+            Edit Profile
           </a>
           <ul className="flex-col md:flex-row list-none items-center hidden md:flex">
             <UserDropdown />

@@ -2,27 +2,22 @@ import React, { useEffect, useState } from "react";
 import { activeUser } from "../../helper/UserApi.jsx";
 import Navbar from "./components/Navbar.js";
 import Sidebar from "../../components/Sidebar.js";
-import ServerDataGrid from "./components/ServerDataGrid.jsx";
-import {
-  activeCustomer,
-  fetchCustomerData,
-} from "../../helper/CustomerApi.jsx";
-
-const SubscriptionStatus = () => {
+import UpdateProfileCard from "./components/UpdateProfileCard.jsx";
+import { toast } from "react-hot-toast";
+import CurrentUserCard from "./components/CurrentUserCard.jsx";
+const ProfileDashboard = () => {
   const [AuthTypeVal, setAuthTypeVal] = useState(false);
   const [isAdmin, setIsAdminVal] = useState(false);
   const [renderVal, setRenderVal] = useState();
-  const [customerData, setCustomerData] = useState([]);
-  const [statusRenderPermit, setStatusRenderPermit] = useState();
 
   const activeUserFunc = () => {
     const activeUserPromise = activeUser();
     activeUserPromise
-      .then((type) => {
-        if (type === "admin") {
+      .then((data) => {
+        if (data.type === "admin") {
           setAuthTypeVal(true);
           setIsAdminVal(true);
-        } else if (type === "customer") {
+        } else if (data.type === "customer") {
           setAuthTypeVal(true);
         }
       })
@@ -35,40 +30,9 @@ const SubscriptionStatus = () => {
       });
   };
 
-  
-
-  const getCustomerDataFunc = (msg) => {
-    const newPromise = fetchCustomerData(msg);
-    newPromise
-      .then((data) => {
-        if(data.msg === "NO_DATA") setStatusRenderPermit(false)
-        else{
-          setCustomerData(data);
-          console.log(data.msg);
-          setStatusRenderPermit(true)
-        }
-      })
-      .catch((err) => console.log(err.message));
-  };
-
-  const displayStatus = customerData.map((index, id) => {
-    return (
-      <ServerDataGrid key={id} servername={index.servername} username={index.username} duration={index.duration} subtype={index.subtype} />
-    );
-  });
-
   useEffect(() => {
     activeUserFunc();
-    const activeCustomerFunc = () => {
-      const activeCustomerPromise = activeCustomer();
-      activeCustomerPromise
-        .then((msg) => {
-          getCustomerDataFunc(msg)
-        })
-        .catch((err) => console.log(err.message));
-    };
-
-    activeCustomerFunc();
+    toast.remove();
   }, []);
 
   return (
@@ -81,8 +45,9 @@ const SubscriptionStatus = () => {
           <div className="px-4 md:px-10 mx-auto w-full">
             <div>
               {/* Card stats */}
-              <div>
-              {statusRenderPermit && displayStatus}
+              <div className=" mx-auto w-full">
+                <CurrentUserCard/><br/><br/>
+                <UpdateProfileCard />
               </div>
             </div>
           </div>
@@ -98,4 +63,4 @@ const SubscriptionStatus = () => {
   );
 };
 
-export default SubscriptionStatus;
+export default ProfileDashboard;

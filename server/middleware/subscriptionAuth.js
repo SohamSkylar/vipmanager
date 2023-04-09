@@ -5,7 +5,7 @@ const ENV = require("../config.js");
 
 const SubtableName = "sublist";
 const ServertableName = "serverlist";
-const UsertableName = "customer";
+const UsertableName = "user";
 
 const authCustomer = async (req, res, next) => {
   try {
@@ -107,11 +107,12 @@ const verifyCustomer = async (req, res, next) => {
   try {
     conn = await pool.getConnection();
     console.log("db is active");
-    const existUserQuery = `SELECT COUNT(*) as existUsers FROM ${UsertableName} WHERE username=?`;
+    const existUserQuery = `SELECT COUNT(*) as existUsers FROM ${UsertableName} WHERE id=?`;
     const existUserQueryResult = await pool.query(
       existUserQuery,
-      req.body.username
+      req.body.userid
     );
+    console.log(existUserQueryResult)
     const existUserVal = Number(existUserQueryResult[0].existUsers.toString());
     if (existUserVal === 1) next();
     else if (existUserVal === 0) throw new Error("NO_USER_AVAILABLE");

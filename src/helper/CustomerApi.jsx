@@ -25,7 +25,7 @@ export async function addNewCustomer(customerdetails) {
     if (msg === "success") return Promise.resolve(msg);
     else if (msg === "NO_USER_AVAILABLE") return Promise.reject(msg);
     else if (msg === "DUPLICATE_ENTRY") return Promise.reject(msg);
-    else return Promise.reject("fail");
+    else return Promise.reject(msg);
   } catch (err) {
     return Promise.reject(err.message);
   }
@@ -46,12 +46,12 @@ export async function activeCustomer() {
   try {
     const userToken = await localStorage.getItem("token");
     const {
-      data: { msg },
+      data: { msg, userid },
     } = await axios.get(`${BASE_URL}/auth`, {
       headers: { Authorization: `Bearer ${userToken}` },
     });
-    if (msg === "INVALID_CUSTOMER") return Promise.reject(msg);
-    else return Promise.resolve(msg);
+    if (msg === "success") return Promise.resolve(userid)
+    else return Promise.reject(msg);
   } catch (err) {
     return Promise.reject({ error: "Customer Auth Failed" });
   }

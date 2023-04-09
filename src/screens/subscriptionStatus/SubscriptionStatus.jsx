@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { activeUser } from "../../helper/UserApi.jsx";
 import Navbar from "./components/Navbar.js";
-import ServerCard from "./components/ServerCard.jsx";
 import Sidebar from "../../components/Sidebar.js";
-import { showAllServerSub } from "../../helper/SubscriptionApi.jsx";
-import { toast } from "react-hot-toast";
-const Dashboard = () => {
+import ServerDataGrid from "./components/ServerDataGrid.jsx";
+import {
+  activeCustomer,
+  fetchCustomerData,
+} from "../../helper/CustomerApi.jsx";
+
+const SubscriptionStatus = () => {
   const [AuthTypeVal, setAuthTypeVal] = useState(false);
   const [isAdmin, setIsAdminVal] = useState(false);
   const [renderVal, setRenderVal] = useState();
-  const [serverData, setServerData] = useState([]);
+  const [customerData, setCustomerData] = useState([]);
+  const [customerUsername, setCustomerUsername] = useState();
+  const [statusRenderPermit, setStatusRenderPermit] = useState();
 
   const activeUserFunc = () => {
     const activeUserPromise = activeUser();
@@ -21,6 +26,7 @@ const Dashboard = () => {
           setIsAdminVal(true);
         } else if (data.type === "customer") {
           setAuthTypeVal(true);
+          setCustomerUsername(data.username)
         }
       })
       .then(() => {
@@ -32,26 +38,40 @@ const Dashboard = () => {
       });
   };
 
-  const getServerDataFunc = () => {
-    const newPromise = showAllServerSub()
+  
+
+  const getCustomerDataFunc = (msg) => {
+    const newPromise = fetchCustomerData(msg);
     newPromise
       .then((data) => {
-        setServerData(data);
+        if(data.msg === "NO_DATA") setStatusRenderPermit(false)
+        else{
+          setCustomerData(data);
+          // console.log(data.msg);
+          setStatusRenderPermit(true)
+        }
       })
       .catch((err) => console.log(err.message));
   };
 
-  const displayServers = serverData.map((index) => {
+  const displayStatus = customerData.map((index, id) => {
     return (
-      <ServerCard key={index.id} name={index.name} price={index.price} duration={index.duration} />
+      <ServerDataGrid key={id} servername={index.servername} username={customerUsername} duration={index.duration} subtype={index.subtype} />
     );
   });
 
   useEffect(() => {
     activeUserFunc();
-    getServerDataFunc();
-    toast.remove();
-  },[]);
+    const activeCustomerFunc = () => {
+      const activeCustomerPromise = activeCustomer();
+      activeCustomerPromise
+        .then((msg) => {
+          getCustomerDataFunc(msg)
+        })
+        .catch((err) => console.log(err.message));
+    };
+    activeCustomerFunc();
+  }, []);
 
   return (
     <>
@@ -63,7 +83,9 @@ const Dashboard = () => {
           <div className="px-4 md:px-10 mx-auto w-full">
             <div>
               {/* Card stats */}
-              <div className="flex flex-wrap lg:overflow-hidden overflow-scroll serverCardui">{displayServers}</div>
+              <div className="flex flex-wrap lg:overflow-hidden overflow-scroll serverCardui w-full">
+              {statusRenderPermit && displayStatus}
+              </div>
             </div>
           </div>
         </div>
@@ -78,4 +100,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default SubscriptionStatus;

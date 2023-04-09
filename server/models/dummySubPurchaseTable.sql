@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `customer` (
+CREATE TABLE IF NOT EXISTS `servername` (
   `username` VARCHAR(45) NOT NULL,
   `subtype` VARCHAR(45) NOT NULL,
   `duration` INT(45) NOT NULL,

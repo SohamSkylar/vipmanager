@@ -45,16 +45,15 @@ const Register = (props) => {
             successFunc()
           },
           (reject) => {
-            console.log("reject: " + reject);
-            if (reject.includes("409")) {
+            if (reject === "DUPLICATE_USERNAME") {
               toast.error("Username already Exists", {
                 id: toastBox,
               });
-            } else if (reject.includes("410")) {
+            } else if (reject === "DUPLICATE_EMAIL") {
               toast.error("Email already Exists", {
                 id: toastBox,
               });
-            } else if (reject.includes("411")) {
+            } else if (reject === "DUPLICATE_EMAIL_AND_USERNAME") {
               toast.error("Username and Email already Exists", {
                 id: toastBox,
               });
