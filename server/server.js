@@ -5,9 +5,10 @@ const userRouter = require("./router/userRouter");
 const dotenv = require("dotenv").config({ path: "./server/.env" });
 var fs = require("fs");
 const path = require("path");
-const pool = require("./database/conn");
 const serverRouter = require("./router/serverRouter");
 const subscriptionRouter = require("./router/subscriptionRouter");
+const mysqlPool = require("./database/mysqlConnection");
+const paymentRouter = require("./router/paymentRouter");
 
 const PORT = process.env.PORT;
 
@@ -28,25 +29,36 @@ app.get("/", (req, res) => {
 
 //api routes
 app.use("/api", userRouter);
-app.use("/api/server", serverRouter)
-app.use("/api/subs", subscriptionRouter)
+app.use("/api/server", serverRouter);
+app.use("/api/subs", subscriptionRouter);
+app.use("/api/payments", paymentRouter);
 
 app.listen(PORT, () => {
   console.log(`server running on http://localhost:${PORT}`);
 });
 
 const autoCreateTable = () => {
-  const tableFiles = ["userTable.sql", "serverTable.sql", "adminTable.sql", "subscriptionTable.sql", "serverSubTable.sql"]
-  tableFiles.forEach(async tableName => {
-    const generatedScript = fs
-    .readFileSync(path.join(__dirname, `./models/${tableName}`))
-    .toString();
-  try {
-    const query = await pool.query(generatedScript)
-    // console.log(query);
-    } catch (err) {
-    console.log(err.message);
-  }
+  mysqlPool.getConnection((err, connection) => {
+    if (err) console.log(err.message);
+    else if (connection) {
+      const tableFiles = [
+        "userTable.sql",
+        "serverTable.sql",
+        "adminTable.sql",
+        "subscriptionTable.sql",
+        "serverSubTable.sql",
+      ];
+      tableFiles.forEach(async (tableName) => {
+        const generatedScript = fs
+          .readFileSync(path.join(__dirname, `./models/${tableName}`))
+          .toString();
+        connection.query(generatedScript, (err, result) => {
+          if (err) console.log(err.message);
+        });
+      });
+      console.log("default table creation executed");
+    }
+    connection.release();
   });
 };
 autoCreateTable();

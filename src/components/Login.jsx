@@ -31,7 +31,7 @@ const Login = (props) => {
       if(props.type === 'adminlogin'){
         var loginPromise = loginAdmin(values)
       } else {
-        var loginPromise = loginUser(values);
+        loginPromise = loginUser(values);
       }
       toast.promise(loginPromise, {
         loading: "logging in",

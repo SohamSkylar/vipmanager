@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import AddCustomer from "./AddCustomer";
+import EditCustomer from "./EditCustomer";
 
 const ManageCustomers = () => {
   const [selected, setSelected] = useState("add");
@@ -28,6 +29,7 @@ const ManageCustomers = () => {
       <div className="relative w-full InnerNavSectionui mx-auto justify-center">
         <div className="w-full xl:max-w-full manageServersui lg:overflow-hidden overflow-scroll px-6 py-4">
           {selected === "add" && <AddCustomer />}
+          {selected === "edit" && <EditCustomer />}
         </div>
       </div>
     </div>
